@@ -68,7 +68,7 @@ function validateFile(fileInput, fileType) {
 }
 
 async function validateRequest(data) {
-  const { parts, stnk, ktp } = data;
+  const { parts } = data;
   const partsSplitted = parts
     .split(";")
     .map((item) => item.trim())
@@ -79,7 +79,18 @@ async function validateRequest(data) {
   if (duplicateValues.length) {
     console.log(`Ada part number yang duplikat ${duplicateValues.join(", ")}`);
   } else {
-    addRequest(data);
+    const { error, message } = await addRequest(data);
+    const swalConfig = {
+      icon: "success",
+      text: "Berhasil menambah data.",
+    };
+    if (error) {
+      swalConfig.icon = "error";
+      swalConfig.text = "Gagal menambah data.";
+      console.error(message);
+    }
+
+    Swal.fire(swalConfig);
   }
 }
 

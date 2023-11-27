@@ -4,9 +4,9 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { fieldname } = file;
     if (fieldname == "stnk") {
-      cb(null, "uploads/stnk");
+      cb(null, "public/uploads/stnk");
     } else {
-      cb(null, "uploads/ktp");
+      cb(null, "public/uploads/ktp");
     }
   },
   filename: function (req, file, cb) {

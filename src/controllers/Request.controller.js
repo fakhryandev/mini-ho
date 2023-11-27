@@ -1,6 +1,6 @@
 const Request = require("../models/Request");
 const { generator } = require("../utils/report-generator");
-const { convertToDate } = require("../utils/convert-date");
+const { convertToDate, formatDate } = require("../utils/convert-date");
 
 exports.addRequestParts = async (req, res, next) => {
   try {
@@ -45,18 +45,16 @@ exports.addRequestParts = async (req, res, next) => {
 
     await requestPart.save();
 
-    res.status(201).json({});
+    res.status(201).json({
+      error: false,
+    });
   } catch (error) {
-    next(error);
+    res.json({
+      error: true,
+      message: error.message,
+    });
   }
 };
-
-function formatDate(date) {
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-}
 
 exports.getRequestParts = async (req, res, next) => {
   try {
