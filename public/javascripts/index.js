@@ -1,87 +1,101 @@
-document.addEventListener("DOMContentLoaded", async function () {
-  const flatPickSelector = ["tanggalAwal", "tanggalAkhir"];
+document.addEventListener('DOMContentLoaded', async function () {
+  const flatPickSelector = [
+    {
+      selector: 'tanggalAwal',
+      type: 'start',
+    },
+    {
+      selector: 'tanggalAkhir',
+      type: 'current',
+    },
+  ];
 
-  flatPickSelector.map((selector) => flatPickBuilder(selector));
+  flatPickSelector.map((item) => flatPickBuilder(item));
 
   const data = [];
   gridBuilder(data);
 });
 
-function flatPickBuilder(selector) {
-  flatpickr(`#${selector}`, {
-    dateFormat: "d-m-Y",
+function flatPickBuilder(item) {
+  const {selector, type} = item
+  const defaultDate = type === 'current' ? new Date() : new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+
+  const flatPickrConfig = {
+    dateFormat: 'd-m-Y',
     allowInput: true,
-    defaultDate: new Date(),
-  });
+    defaultDate,
+  };
+
+  flatpickr(`#${selector}`, flatPickrConfig);
 }
 
-document.getElementById("add").addEventListener("click", function () {
-  window.location = "/add";
+document.getElementById('add').addEventListener('click', function () {
+  window.location = '/add';
 });
 
-document.getElementById("report").addEventListener("click", function () {
-  const startDate = document.getElementById("tanggalAwal").value;
-  const endDate = document.getElementById("tanggalAkhir").value;
+document.getElementById('report').addEventListener('click', function () {
+  const startDate = document.getElementById('tanggalAwal').value;
+  const endDate = document.getElementById('tanggalAkhir').value;
 
   generateReport(startDate, endDate);
 });
 
-document.getElementById("search").addEventListener("click", function () {
-  const startDate = document.getElementById("tanggalAwal").value;
-  const endDate = document.getElementById("tanggalAkhir").value;
+document.getElementById('search').addEventListener('click', function () {
+  const startDate = document.getElementById('tanggalAwal').value;
+  const endDate = document.getElementById('tanggalAkhir').value;
   getRequestParts(startDate, endDate);
 });
 
 function gridBuilder(data) {
-  const gridContainer = document.getElementById("grid");
-  gridContainer.innerHTML = "";
+  const gridContainer = document.getElementById('grid');
+  gridContainer.innerHTML = '';
 
   const grid = new gridjs.Grid({
     columns: [
       {
-        name: "Action",
+        name: 'Action',
         formatter: (cell, row) => {
           return gridjs.h(
-            "button",
+            'button',
             {
-              className: "btn btn-primary",
+              className: 'btn btn-primary',
               onClick: () => console.log(row),
             },
-            "Detail"
+            'Detail'
           );
         },
       },
       {
-        id: "nomor",
-        name: "Nomor Hotline",
+        id: 'nomor',
+        name: 'Nomor Hotline',
       },
       {
-        id: "nik",
-        name: "KTP",
+        id: 'nik',
+        name: 'KTP',
       },
       {
-        id: "nama",
-        name: "Nama",
+        id: 'nama',
+        name: 'Nama',
       },
       {
-        id: "noka",
-        name: "Nomor Rangka",
+        id: 'noka',
+        name: 'Nomor Rangka',
       },
       {
-        id: "nosin",
-        name: "Nomor Mesin",
+        id: 'nosin',
+        name: 'Nomor Mesin',
       },
       {
-        id: "type",
-        name: "Type Motor",
+        id: 'type',
+        name: 'Type Motor',
       },
       {
-        id: "tahun",
-        name: "Tahun Motor",
+        id: 'tahun',
+        name: 'Tahun Motor',
       },
       {
-        id: "create_at",
-        name: "Tanggal Permintaan",
+        id: 'create_at',
+        name: 'Tanggal Permintaan',
       },
     ],
     pagination: true,
@@ -98,15 +112,15 @@ async function generateReport(startDate, endDate) {
     const requestURL = `api/request/generate-report?startDate=${startDate}&endDate=${endDate}`;
     const response = await fetch(requestURL);
 
-    const contentDisposition = response.headers.get("Content-Disposition");
-    const filename = contentDisposition.split("filename=")[1];
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const filename = contentDisposition.split('filename=')[1];
     const blob = await response.blob();
 
     const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = filename || "file.xlsx";
+    a.download = filename || 'file.xlsx';
 
     document.body.appendChild(a);
     a.click();

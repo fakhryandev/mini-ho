@@ -10,9 +10,11 @@ const buildHeader = (maxPartsLength) => {
     "Kota",
     "Noka",
     "Nosin",
+    "KTP",
+    "STNK"
   ];
-  for (let i = 0; i < maxPartsLength.length; i++) {
-    Headers.push(`Part Number ${i + 1}`, `QTY ${i + 1}`);
+  for (let i = 0; i < maxPartsLength; i++) {
+    headers.push(`Part Number ${i + 1}`, `QTY ${i + 1}`);
   }
 
   return headers;
@@ -28,11 +30,16 @@ const buildRow = (item, maxPartsLength) => {
     item.kota,
     item.noka,
     item.nosin,
+    item.ktp,
+    item.stnk
   ];
 
   for (let i = 0; i < maxPartsLength; i++) {
-    const part = item.parts && item.parts[i] ? item.parts[i] : {};
-    rowData.push(part);
+    if (item.parts && item.parts[i]) {
+      const partNumber = item.parts[i].partNumber
+      const partQty = item.parts[i].qty
+      rowData.push(partNumber, partQty);      
+    }
   }
 
   return rowData;
