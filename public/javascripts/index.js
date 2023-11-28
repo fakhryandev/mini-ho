@@ -20,7 +20,10 @@ document.getElementById("add").addEventListener("click", function () {
 });
 
 document.getElementById("report").addEventListener("click", function () {
-  console.log("a");
+  const startDate = document.getElementById("tanggalAwal").value;
+  const endDate = document.getElementById("tanggalAkhir").value;
+
+  generateReport(startDate, endDate);
 });
 
 document.getElementById("search").addEventListener("click", function () {
@@ -90,12 +93,33 @@ function gridBuilder(data) {
   return grid;
 }
 
+async function generateReport(startDate, endDate) {
+  try {
+    const requestURL = `api/request/generate-report?startDate=${startDate}&endDate=${endDate}`;
+    const response = await fetch(requestURL);
+
+    const contentDisposition = response.headers.get("Content-Disposition");
+    const filename = contentDisposition.split("filename=")[1];
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename || "file.xlsx";
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
 async function getRequestParts(startDate, endDate) {
   const requestURL = `api/request?startDate=${startDate}&endDate=${endDate}`;
   const response = await fetch(requestURL);
   const result = await response.json();
-
-  console.log(result);
 
   gridBuilder(result);
 }

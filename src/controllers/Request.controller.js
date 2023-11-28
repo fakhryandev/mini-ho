@@ -79,7 +79,15 @@ exports.getRequestParts = async (req, res, next) => {
 
 exports.generateReport = async (req, res, next) => {
   try {
-    const requestParts = await Request.find({});
+    const { startDate, endDate } = req.query;
+
+    const requestParts = await Request.find({
+      create_at: {
+        $gte: convertToDate(startDate, "T00:00:01"),
+        $lte: convertToDate(endDate, "T23:59:59"),
+      },
+    });
+
     const generatedFile = generator(requestParts);
 
     res.setHeader(
@@ -98,6 +106,8 @@ exports.generateReport = async (req, res, next) => {
         res.status(500).send("Internal Server Error");
       });
   } catch (error) {
-    next(error);
+    res.json({
+      error: true,
+    });
   }
 };
