@@ -3,6 +3,14 @@ const authURL = 'api/auth';
 
 const registerForm = document.getElementById('registerForm');
 
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -23,6 +31,8 @@ registerForm.addEventListener('submit', async function (e) {
 
 async function register(data) {
   const registerUrl = `${authURL}/sign-up`;
+  showLoadingOverlay();
+
   const response = await fetch(registerUrl, {
     method: 'POST',
     headers: {
@@ -45,5 +55,6 @@ async function register(data) {
     swalConfig.text = message;
   }
 
+  hideLoadingOverlay();
   Swal.fire(swalConfig);
 }

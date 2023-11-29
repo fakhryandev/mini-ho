@@ -1,20 +1,28 @@
-const registerForm = document.getElementById("requestForm");
+const registerForm = document.getElementById('requestForm');
 
-registerForm.addEventListener("submit", function (e) {
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+registerForm.addEventListener('submit', function (e) {
   e.preventDefault();
-  const nomor = document.getElementById("nomor").value;
-  const nik = document.getElementById("nik").value;
-  const nama = document.getElementById("nama").value;
-  const alamat = document.getElementById("alamat").value;
-  const telepon = document.getElementById("telepon").value;
-  const kota = document.getElementById("kota").value;
-  const noka = document.getElementById("noka").value;
-  const nosin = document.getElementById("nosin").value;
-  const type = document.getElementById("type").value;
-  const tahun = document.getElementById("tahun").value;
-  const parts = document.getElementById("parts").value;
-  const ktp = document.getElementById("ktp");
-  const stnk = document.getElementById("stnk");
+  const nomor = document.getElementById('nomor').value;
+  const nik = document.getElementById('nik').value;
+  const nama = document.getElementById('nama').value;
+  const alamat = document.getElementById('alamat').value;
+  const telepon = document.getElementById('telepon').value;
+  const kota = document.getElementById('kota').value;
+  const noka = document.getElementById('noka').value;
+  const nosin = document.getElementById('nosin').value;
+  const type = document.getElementById('type').value;
+  const tahun = document.getElementById('tahun').value;
+  const parts = document.getElementById('parts').value;
+  const ktp = document.getElementById('ktp');
+  const stnk = document.getElementById('stnk');
 
   const data = {
     nomor,
@@ -54,9 +62,9 @@ function findDuplicates(parts) {
 function validateFile(fileInput, fileType) {
   const file = fileInput.files[0];
 
-  const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
   if (!allowedTypes.includes(file.type)) {
-    console.log("Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.");
+    console.log('Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.');
   }
 
   const maxSizeMB = 10;
@@ -70,32 +78,35 @@ function validateFile(fileInput, fileType) {
 async function validateRequest(data) {
   const { parts } = data;
   const partsSplitted = parts
-    .split(";")
+    .split(';')
     .map((item) => item.trim())
-    .filter((item) => item != "");
+    .filter((item) => item != '');
 
   const duplicateValues = findDuplicates(partsSplitted);
 
   if (duplicateValues.length) {
-    console.log(`Ada part number yang duplikat ${duplicateValues.join(", ")}`);
+    console.log(`Ada part number yang duplikat ${duplicateValues.join(', ')}`);
   } else {
+    showLoadingOverlay();
+
     const { error, message } = await addRequest(data);
     const swalConfig = {
-      icon: "success",
-      text: "Berhasil menambah data.",
+      icon: 'success',
+      text: 'Berhasil menambah data.',
     };
     if (error) {
-      swalConfig.icon = "error";
-      swalConfig.text = "Gagal menambah data.";
+      swalConfig.icon = 'error';
+      swalConfig.text = 'Gagal menambah data.';
       console.error(message);
     }
+    hideLoadingOverlay();
 
     Swal.fire(swalConfig);
   }
 }
 
 async function addRequest(data) {
-  const requestURL = "api/request";
+  const requestURL = 'api/request';
   const formData = new FormData();
 
   const {
@@ -114,25 +125,26 @@ async function addRequest(data) {
     stnk,
   } = data;
 
-  formData.append("nomor", nomor);
-  formData.append("nik", nik);
-  formData.append("nama", nama);
-  formData.append("alamat", alamat);
-  formData.append("telepon", telepon);
-  formData.append("kota", kota);
-  formData.append("noka", noka);
-  formData.append("nosin", nosin);
-  formData.append("type", type);
-  formData.append("tahun", tahun);
-  formData.append("parts", parts);
-  formData.append("ktp", ktp.files[0]);
-  formData.append("stnk", stnk.files[0]);
+  formData.append('nomor', nomor);
+  formData.append('nik', nik);
+  formData.append('nama', nama);
+  formData.append('alamat', alamat);
+  formData.append('telepon', telepon);
+  formData.append('kota', kota);
+  formData.append('noka', noka);
+  formData.append('nosin', nosin);
+  formData.append('type', type);
+  formData.append('tahun', tahun);
+  formData.append('parts', parts);
+  formData.append('ktp', ktp.files[0]);
+  formData.append('stnk', stnk.files[0]);
 
   const response = await fetch(requestURL, {
-    method: "POST",
+    method: 'POST',
     body: formData,
   });
 
   const result = await response.json();
+
   return result;
 }

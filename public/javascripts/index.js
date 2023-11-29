@@ -16,9 +16,20 @@ document.addEventListener('DOMContentLoaded', async function () {
   gridBuilder(data);
 });
 
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 function flatPickBuilder(item) {
-  const {selector, type} = item
-  const defaultDate = type === 'current' ? new Date() : new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const { selector, type } = item;
+  const defaultDate =
+    type === 'current'
+      ? new Date()
+      : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
   const flatPickrConfig = {
     dateFormat: 'd-m-Y',
@@ -109,6 +120,8 @@ function gridBuilder(data) {
 
 async function generateReport(startDate, endDate) {
   try {
+    showLoadingOverlay();
+
     const requestURL = `api/request/generate-report?startDate=${startDate}&endDate=${endDate}`;
     const response = await fetch(requestURL);
 
@@ -125,15 +138,19 @@ async function generateReport(startDate, endDate) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    hideLoadingOverlay();
   } catch (error) {
     console.error(error.message);
   }
 }
 
 async function getRequestParts(startDate, endDate) {
+  showLoadingOverlay();
+
   const requestURL = `api/request?startDate=${startDate}&endDate=${endDate}`;
   const response = await fetch(requestURL);
   const result = await response.json();
+  hideLoadingOverlay();
 
   gridBuilder(result);
 }

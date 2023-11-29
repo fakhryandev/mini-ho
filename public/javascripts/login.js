@@ -1,5 +1,13 @@
 const authURL = 'api/auth';
 
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 const loginForm = document.getElementById('loginForm');
 loginForm.addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -18,6 +26,7 @@ loginForm.addEventListener('submit', async function (e) {
 async function login(data) {
   try {
     const loginUrl = `${authURL}/login`;
+    showLoadingOverlay();
     const response = await fetch(loginUrl, {
       method: 'POST',
       headers: {
@@ -35,6 +44,7 @@ async function login(data) {
         icon: 'error',
         text: result.message,
       };
+      hideLoadingOverlay();
 
       Swal.fire(swalConfig);
     }
