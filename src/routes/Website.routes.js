@@ -3,11 +3,11 @@ const router = express.Router();
 const { authenticated } = require('../utils/authentication');
 
 router.get('/', authenticated, (req, res) => {
-  res.render('pages/index');
+  res.render('pages/index', { user: res.locals.currentUser });
 });
 
 router.get('/add', authenticated, (req, res) => {
-  res.render('pages/add');
+  res.render('pages/add', { user: res.locals.currentUser });
 });
 
 router.get('/register', (req, res) => {
