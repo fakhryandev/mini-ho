@@ -64,14 +64,24 @@ function validateFile(fileInput, fileType) {
 
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
   if (!allowedTypes.includes(file.type)) {
-    console.log('Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.');
+    const swalConfig = {
+      icon: 'success',
+      text: 'Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.',
+    };
+
+    Swal.fire(swalConfig);
   }
 
   const maxSizeMB = 10;
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
   if (file.size > maxSizeBytes) {
-    console.log(`Ukuran file terlalu besar. Maksimal ${maxSizeMB} MB.`);
+    const swalConfig = {
+      icon: 'success',
+      text: `Ukuran file terlalu besar. Maksimal ${maxSizeMB} MB.`,
+    };
+
+    Swal.fire(swalConfig);
   }
 }
 
@@ -85,7 +95,12 @@ async function validateRequest(data) {
   const duplicateValues = findDuplicates(partsSplitted);
 
   if (duplicateValues.length) {
-    console.log(`Ada part number yang duplikat ${duplicateValues.join(', ')}`);
+    const swalConfig = {
+      icon: 'success',
+      text: `Ada part number yang duplikat ${duplicateValues.join(', ')}`,
+    };
+
+    Swal.fire(swalConfig);
   } else {
     showLoadingOverlay();
 

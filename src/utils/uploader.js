@@ -1,12 +1,24 @@
-const multer = require("multer");
+const multer = require('multer');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { fieldname } = file;
-    if (fieldname == "stnk") {
-      cb(null, "public/uploads/stnk");
+    if (fieldname == 'stnk') {
+      const uploadFolder = 'public/uploads/stnk';
+      if (!fs.existsSync(uploadFolder)) {
+        // Jika belum ada, buat folder
+        fs.mkdirSync(uploadFolder, { recursive: true });
+      }
+
+      cb(null, uploadFolder);
     } else {
-      cb(null, "public/uploads/ktp");
+      const uploadFolder = 'public/uploads/ktp';
+      if (!fs.existsSync(uploadFolder)) {
+        // Jika belum ada, buat folder
+        fs.mkdirSync(uploadFolder, { recursive: true });
+      }
+      cb(null, uploadFolder);
     }
   },
   filename: function (req, file, cb) {

@@ -1,8 +1,8 @@
-const Request = require("../models/Request");
-const { generator } = require("../utils/report-generator");
-const { convertToDate, formatDate } = require("../utils/convert-date");
+const Request = require('../models/Request');
+const { generator } = require('../utils/report-generator');
+const { convertToDate, formatDate } = require('../utils/convert-date');
 
-exports.addRequestParts = async (req, res, next) => {
+exports.addRequestParts = async (req, res) => {
   try {
     const {
       nomor,
@@ -18,13 +18,15 @@ exports.addRequestParts = async (req, res, next) => {
       parts,
     } = req.body;
 
-    const ktp = req.files["ktp"][0];
-    const stnk = req.files["stnk"][0];
+    const ktp = req.files['ktp'][0];
+    const stnk = req.files['stnk'][0];
 
     const partsArr = parts
-      .split(";")
+      .split(';')
       .map((item) => item.trim())
-      .filter((item) => item != "");
+      .filter((item) => item != '');
+
+    const user = res.locals.currentUser;
 
     const requestPart = new Request({
       erro: 1,
@@ -41,6 +43,7 @@ exports.addRequestParts = async (req, res, next) => {
       parts: partsArr.map((partNumber) => ({ partNumber, qty: 1 })),
       ktp: ktp.path,
       stnk: stnk.path,
+      create_by: user,
     });
 
     await requestPart.save();
@@ -56,14 +59,14 @@ exports.addRequestParts = async (req, res, next) => {
   }
 };
 
-exports.getRequestParts = async (req, res, next) => {
+exports.getRequestParts = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
     const requestParts = await Request.find({
       create_at: {
-        $gte: convertToDate(startDate, "T00:00:01"),
-        $lte: convertToDate(endDate, "T23:59:59"),
+        $gte: convertToDate(startDate, 'T00:00:01'),
+        $lte: convertToDate(endDate, 'T23:59:59'),
       },
     });
 
@@ -73,7 +76,9 @@ exports.getRequestParts = async (req, res, next) => {
     }));
     res.json(formattedData);
   } catch (error) {
-    next(error);
+    res.json({
+      error: true,
+    });
   }
 };
 
@@ -83,18 +88,18 @@ exports.generateReport = async (req, res, next) => {
 
     const requestParts = await Request.find({
       create_at: {
-        $gte: convertToDate(startDate, "T00:00:01"),
-        $lte: convertToDate(endDate, "T23:59:59"),
+        $gte: convertToDate(startDate, 'T00:00:01'),
+        $lte: convertToDate(endDate, 'T23:59:59'),
       },
     });
 
     const generatedFile = generator(requestParts);
 
     res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader("Content-Disposition", "attachment; filename=output.xlsx");
+    res.setHeader('Content-Disposition', 'attachment; filename=output.xlsx');
 
     generatedFile.xlsx
       .write(res)
@@ -102,8 +107,8 @@ exports.generateReport = async (req, res, next) => {
         res.end();
       })
       .catch((error) => {
-        console.error("Gagal menulis ke response", error);
-        res.status(500).send("Internal Server Error");
+        console.error('Gagal menulis ke response', error);
+        res.status(500).send('Internal Server Error');
       });
   } catch (error) {
     res.json({

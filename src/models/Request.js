@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RequestSchema = new Schema(
@@ -52,15 +52,18 @@ const RequestSchema = new Schema(
     stnk: {
       type: String,
     },
+    create_by: {
+      type: String,
+    },
   },
   {
     timestamps: {
-      createdAt: "create_at",
+      createdAt: 'create_at',
       updatedAt: false,
     },
   }
 );
 
-const Request = mongoose.model("Request", RequestSchema);
+const Request = mongoose.model('Request', RequestSchema);
 
 module.exports = Request;
