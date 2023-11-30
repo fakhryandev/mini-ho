@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uuid = require('uuid');
 const Schema = mongoose.Schema;
 
 const RequestSchema = new Schema(
@@ -47,10 +48,22 @@ const RequestSchema = new Schema(
       },
     ],
     ktp: {
-      type: String,
+      path: {
+        type: String,
+      },
+      url: {
+        type: String,
+        unique: true,
+      },
     },
     stnk: {
-      type: String,
+      path: {
+        type: String,
+      },
+      url: {
+        type: String,
+        unique: true,
+      },
     },
     create_by: {
       type: String,
@@ -63,6 +76,12 @@ const RequestSchema = new Schema(
     },
   }
 );
+
+RequestSchema.pre('save', function (next) {
+  this.stnk.url = `${Date.now()}-${uuid.v4()}`;
+  this.ktp.url = `${Date.now()}-${uuid.v4()}`;
+  next();
+});
 
 const Request = mongoose.model('Request', RequestSchema);
 

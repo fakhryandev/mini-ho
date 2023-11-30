@@ -109,6 +109,11 @@ async function validateRequest(data) {
       icon: 'success',
       text: 'Berhasil menambah data.',
     };
+
+    if (!error) {
+      registerForm.reset();
+    }
+
     if (error) {
       swalConfig.icon = 'error';
       swalConfig.text = 'Gagal menambah data.';

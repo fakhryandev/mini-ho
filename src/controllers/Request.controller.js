@@ -1,6 +1,8 @@
 const Request = require('../models/Request');
 const { generator } = require('../utils/report-generator');
 const { convertToDate, formatDate } = require('../utils/convert-date');
+const path = require('path');
+const os = require('os');
 
 exports.addRequestParts = async (req, res) => {
   try {
@@ -41,8 +43,12 @@ exports.addRequestParts = async (req, res) => {
       type,
       tahun,
       parts: partsArr.map((partNumber) => ({ partNumber, qty: 1 })),
-      ktp: ktp.path,
-      stnk: stnk.path,
+      ktp: {
+        path: ktp.path,
+      },
+      stnk: {
+        path: stnk.path,
+      },
       create_by: user,
     });
 
@@ -114,5 +120,34 @@ exports.generateReport = async (req, res, next) => {
     res.json({
       error: true,
     });
+  }
+};
+
+exports.getPhotos = async (req, res) => {
+  try {
+    const photoData = await Request.findOne({
+      $or: [
+        {
+          'stnk.url': req.params.urlphoto,
+        },
+        {
+          'ktp.url': req.params.urlphoto,
+        },
+      ],
+    });
+
+    if (!photoData) {
+      return res.status(404).json({ message: 'Data tidak ditemukan' });
+    }
+
+    const filePath =
+      req.params.urlphoto === photoData.stnk.url
+        ? photoData.stnk.path
+        : photoData.ktp.path;
+
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Gagal meng-handle permintaan file:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };

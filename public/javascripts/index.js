@@ -64,19 +64,6 @@ function gridBuilder(data) {
   const grid = new gridjs.Grid({
     columns: [
       {
-        name: 'Action',
-        formatter: (cell, row) => {
-          return gridjs.h(
-            'button',
-            {
-              className: 'btn btn-primary',
-              onClick: () => console.log(row),
-            },
-            'Detail'
-          );
-        },
-      },
-      {
         id: 'nomor',
         name: 'Nomor Hotline',
       },

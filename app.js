@@ -18,6 +18,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const db = mongoose.connection;
 
+const requestController = require('./src/controllers/Request.controller');
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -91,6 +93,8 @@ app.use((req, res, next) => {
 app.use('/', websiteRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/request', requestRoutes);
+
+app.get('/photos/:urlphoto', requestController.getPhotos);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
