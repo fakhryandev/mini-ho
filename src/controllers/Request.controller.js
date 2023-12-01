@@ -1,8 +1,6 @@
 const Request = require('../models/Request');
 const { generator } = require('../utils/report-generator');
 const { convertToDate, formatDate } = require('../utils/convert-date');
-const path = require('path');
-const os = require('os');
 
 exports.addRequestParts = async (req, res) => {
   try {
@@ -31,7 +29,7 @@ exports.addRequestParts = async (req, res) => {
     const user = res.locals.currentUser;
 
     const requestPart = new Request({
-      erro: 1,
+      erro: user.erro,
       nomor,
       nik,
       nama,
@@ -49,7 +47,7 @@ exports.addRequestParts = async (req, res) => {
       stnk: {
         path: stnk.path,
       },
-      create_by: user,
+      create_by: user.username,
     });
 
     await requestPart.save();
@@ -105,7 +103,7 @@ exports.generateReport = async (req, res, next) => {
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader('Content-Disposition', 'attachment; filename=output.xlsx');
+    res.setHeader('Content-Disposition', `attachment; filename=${startDate}-${endDate}_RequestPart.xlsx`);
 
     generatedFile.xlsx
       .write(res)
