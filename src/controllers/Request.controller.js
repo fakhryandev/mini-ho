@@ -1,8 +1,30 @@
 const Request = require('../models/Request');
 const { generator } = require('../utils/report-generator');
 const { convertToDate, formatDate } = require('../utils/convert-date');
-const path = require('path');
-const os = require('os');
+const { validatePartsRequest } = require('../utils/parts-validator');
+
+const getRequestTwoMonthsAgo = async ({ nik, noka }) => {
+  try {
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setUTCHours(0, 0, 0, 0);
+    twoMonthsAgo.setUTCMonth(twoMonthsAgo.getUTCMonth() - 2);
+
+    const result = Request.find({
+      create_at: {
+        $gte: twoMonthsAgo,
+        $lte: new Date(),
+      },
+      nik,
+      noka,
+    });
+
+    return result;
+  } catch (error) {
+    res.json({
+      error: true,
+    });
+  }
+};
 
 exports.addRequestParts = async (req, res) => {
   try {
@@ -28,6 +50,19 @@ exports.addRequestParts = async (req, res) => {
       .map((item) => item.trim())
       .filter((item) => item != '');
 
+    const twoMonthsAgoRequest = await getRequestTwoMonthsAgo({ noka, nik });
+
+    const isValid = validatePartsRequest({
+      data: twoMonthsAgoRequest,
+      partsArr,
+    });
+
+    if (!isValid) {
+      throw new Error(
+        'Terdapat permintaan part yang sama dalam dua bulan terakhir'
+      );
+    }
+
     const user = res.locals.currentUser;
 
     const requestPart = new Request({
@@ -49,7 +84,7 @@ exports.addRequestParts = async (req, res) => {
       stnk: {
         path: stnk.path,
       },
-      create_by: user,
+      create_by: user.username,
     });
 
     await requestPart.save();
@@ -58,6 +93,7 @@ exports.addRequestParts = async (req, res) => {
       error: false,
     });
   } catch (error) {
+    console.error(error);
     res.json({
       error: true,
       message: error.message,

@@ -116,7 +116,7 @@ async function validateRequest(data) {
 
     if (error) {
       swalConfig.icon = 'error';
-      swalConfig.text = 'Gagal menambah data.';
+      swalConfig.text = message;
       console.error(message);
     }
     hideLoadingOverlay();
