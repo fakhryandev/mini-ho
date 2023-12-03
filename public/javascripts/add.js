@@ -1,5 +1,12 @@
 const registerForm = document.getElementById('requestForm');
 
+document.addEventListener('DOMContentLoaded', function () {
+  $('#parts').tokenfield({
+    delimiter: ';',
+    createTokensOnBlur: true,
+  });
+});
+
 function showLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'flex';
 }
@@ -8,7 +15,7 @@ function hideLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'none';
 }
 
-registerForm.addEventListener('submit', function (e) {
+registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const nomor = document.getElementById('nomor').value;
   const nik = document.getElementById('nik').value;
@@ -40,7 +47,33 @@ registerForm.addEventListener('submit', function (e) {
     stnk,
   };
 
-  validateRequest(data);
+  const { valid, message } = validateRequest(data);
+
+  if (valid) {
+    showLoadingOverlay();
+    const { error, message } = await addRequest(data);
+    const swalConfig = {
+      icon: 'success',
+      text: 'Berhasil menambah data.',
+    };
+    if (!error) {
+      registerForm.reset();
+      $('#parts').tokenfield('setTokens', []);
+    }
+    if (error) {
+      swalConfig.icon = 'error';
+      swalConfig.text = message;
+      console.error(message);
+    }
+    hideLoadingOverlay();
+    Swal.fire(swalConfig);
+  } else {
+    const swalConfig = {
+      icon: 'error',
+      text: message,
+    };
+    Swal.fire(swalConfig);
+  }
 });
 
 function findDuplicates(parts) {
@@ -85,44 +118,102 @@ function validateFile(fileInput, fileType) {
   }
 }
 
-async function validateRequest(data) {
-  const { parts } = data;
-  const partsSplitted = parts
-    .split(';')
-    .map((item) => item.trim())
-    .filter((item) => item != '');
+function isStringEmptyOrWhitespace(inputString) {
+  return inputString.trim() === '';
+}
 
-  const duplicateValues = findDuplicates(partsSplitted);
+function validateRequest(data) {
+  const result = {
+    valid: true,
+    message: '',
+  };
 
-  if (duplicateValues.length) {
-    const swalConfig = {
-      icon: 'error',
-      text: `Ada part number yang duplikat ${duplicateValues.join(', ')}`,
-    };
+  const {
+    nomor,
+    nik,
+    nama,
+    alamat,
+    telepon,
+    kota,
+    noka,
+    nosin,
+    type,
+    tahun,
+    parts,
+  } = data;
 
-    Swal.fire(swalConfig);
-  } else {
-    showLoadingOverlay();
-
-    const { error, message } = await addRequest(data);
-    const swalConfig = {
-      icon: 'success',
-      text: 'Berhasil menambah data.',
-    };
-
-    if (!error) {
-      registerForm.reset();
-    }
-
-    if (error) {
-      swalConfig.icon = 'error';
-      swalConfig.text = 'Gagal menambah data.';
-      console.error(message);
-    }
-    hideLoadingOverlay();
-
-    Swal.fire(swalConfig);
+  if (isStringEmptyOrWhitespace(nomor)) {
+    result.message = `${result.message} Nomor Hotline tidak boleh kosong,`;
+    result.valid = false;
   }
+
+  if (isStringEmptyOrWhitespace(nik)) {
+    result.message = `${result.message} NIK tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(nama)) {
+    result.message = `${result.message} Nama tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(alamat)) {
+    result.message = `${result.message} Alamat tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(telepon)) {
+    result.message = `${result.message} Nomor Telepon tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(kota)) {
+    result.message = `${result.message} Kota tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(noka)) {
+    result.message = `${result.message} Nomor Rangka tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(nosin)) {
+    result.message = `${result.message} Nomor Hotline tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(type)) {
+    result.message = `${result.message} Tipe Motor tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(tahun)) {
+    result.message = `${result.message} Tahun Motor tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (isStringEmptyOrWhitespace(parts)) {
+    result.message = `${result.message} Parts tidak boleh kosong.`;
+    result.valid = false;
+  }
+
+  if (!isStringEmptyOrWhitespace(parts)) {
+    const partsSplitted = parts
+      .split(';')
+      .map((item) => item.trim())
+      .filter((item) => item != '');
+
+    const duplicateValues = findDuplicates(partsSplitted);
+
+    if (duplicateValues.length) {
+      result.message = `Ada part number yang duplikat ${duplicateValues.join(
+        ', '
+      )}.`;
+      result.valid = false;
+    }
+  }
+
+  return result;
 }
 
 async function addRequest(data) {

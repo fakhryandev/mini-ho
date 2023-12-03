@@ -7,15 +7,17 @@ const homePath = os.homedir();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { fieldname } = file;
+    const { nomor } = req.body;
+
     if (fieldname == 'stnk') {
-      const uploadFolder = `${homePath}/mini-ho-file/stnk`;
+      const uploadFolder = `${homePath}/mini-ho-file/stnk/${nomor}`;
       if (!fs.existsSync(uploadFolder)) {
         fs.mkdirSync(uploadFolder, { recursive: true });
       }
 
       cb(null, uploadFolder);
     } else {
-      const uploadFolder = `${homePath}/mini-ho-file/ktp`;
+      const uploadFolder = `${homePath}/mini-ho-file/ktp/${nomor}`;
       if (!fs.existsSync(uploadFolder)) {
         fs.mkdirSync(uploadFolder, { recursive: true });
       }
