@@ -98,7 +98,7 @@ function validateFile(fileInput, fileType) {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
   if (!allowedTypes.includes(file.type)) {
     const swalConfig = {
-      icon: 'success',
+      icon: 'error',
       text: 'Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.',
     };
 
@@ -110,7 +110,7 @@ function validateFile(fileInput, fileType) {
 
   if (file.size > maxSizeBytes) {
     const swalConfig = {
-      icon: 'success',
+      icon: 'error',
       text: `Ukuran file terlalu besar. Maksimal ${maxSizeMB} MB.`,
     };
 

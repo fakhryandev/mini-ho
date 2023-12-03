@@ -66,7 +66,7 @@ exports.addRequestParts = async (req, res) => {
     const user = res.locals.currentUser;
 
     const requestPart = new Request({
-      erro: 1,
+      erro: user.erro,
       nomor,
       nik,
       nama,
@@ -141,7 +141,7 @@ exports.generateReport = async (req, res, next) => {
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader('Content-Disposition', 'attachment; filename=output.xlsx');
+    res.setHeader('Content-Disposition', `attachment; filename=${startDate}-${endDate}_RequestPart.xlsx`);
 
     generatedFile.xlsx
       .write(res)

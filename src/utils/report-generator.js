@@ -2,6 +2,7 @@ const ExcelJS = require("exceljs");
 
 const buildHeader = (maxPartsLength) => {
   const headers = [
+    "Kode Erro",
     "Nomor",
     "Nama",
     "Nik",
@@ -22,6 +23,7 @@ const buildHeader = (maxPartsLength) => {
 
 const buildRow = (item, maxPartsLength) => {
   const rowData = [
+    item.erro,
     item.nomor,
     item.nama,
     item.nik,
@@ -30,8 +32,8 @@ const buildRow = (item, maxPartsLength) => {
     item.kota,
     item.noka,
     item.nosin,
-    item.ktp,
-    item.stnk
+    `localhost:3000/photos/${item.ktp.url}`,
+    `localhost:3000/photos/${item.stnk.url}`,
   ];
 
   for (let i = 0; i < maxPartsLength; i++) {

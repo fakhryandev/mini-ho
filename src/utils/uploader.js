@@ -12,7 +12,6 @@ const storage = multer.diskStorage({
     if (fieldname == 'stnk') {
       const uploadFolder = `${homePath}/mini-ho-file/stnk/${nomor}`;
       if (!fs.existsSync(uploadFolder)) {
-        // Jika belum ada, buat folder
         fs.mkdirSync(uploadFolder, { recursive: true });
       }
 
