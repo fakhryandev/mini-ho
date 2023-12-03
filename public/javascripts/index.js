@@ -90,9 +90,6 @@ function validateRange(startDate, endDate) {
   const startDateConverted = parseDate(startDate);
   const endDateConverted = parseDate(endDate);
 
-  console.log(startDateConverted);
-  console.log(endDateConverted);
-
   if (startDateConverted > endDateConverted) {
     return {
       valid: false,

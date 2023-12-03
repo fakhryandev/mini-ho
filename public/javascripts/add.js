@@ -15,6 +15,16 @@ function hideLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'none';
 }
 
+const stnk = document.getElementById('stnk');
+const ktp = document.getElementById('ktp');
+stnk.addEventListener('change', function () {
+  validateFile(stnk, 'stnk');
+});
+
+ktp.addEventListener('change', function () {
+  validateFile(ktp, 'ktp');
+});
+
 registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const nomor = document.getElementById('nomor').value;
@@ -99,22 +109,24 @@ function validateFile(fileInput, fileType) {
   if (!allowedTypes.includes(file.type)) {
     const swalConfig = {
       icon: 'error',
-      text: 'Hanya file dengan tipe JPG, JPEG, atau PNG yang diizinkan.',
+      text: `Hanya file ${fileType} dengan tipe JPG, JPEG, atau PNG yang diizinkan.`,
     };
+    fileInput.value = '';
 
-    Swal.fire(swalConfig);
+    return Swal.fire(swalConfig);
   }
 
   const maxSizeMB = 10;
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
   if (file.size > maxSizeBytes) {
+    fileInput.value = '';
     const swalConfig = {
       icon: 'error',
-      text: `Ukuran file terlalu besar. Maksimal ${maxSizeMB} MB.`,
+      text: `Ukuran file ${fileType} terlalu besar. Maksimal ${maxSizeMB} MB.`,
     };
 
-    Swal.fire(swalConfig);
+    return Swal.fire(swalConfig);
   }
 }
 
@@ -140,6 +152,8 @@ function validateRequest(data) {
     type,
     tahun,
     parts,
+    stnk,
+    ktp,
   } = data;
 
   if (isStringEmptyOrWhitespace(nomor)) {
@@ -206,11 +220,21 @@ function validateRequest(data) {
     const duplicateValues = findDuplicates(partsSplitted);
 
     if (duplicateValues.length) {
-      result.message = `Ada part number yang duplikat ${duplicateValues.join(
-        ', '
-      )}.`;
+      result.message = `${
+        result.message
+      } Ada part number yang duplikat ${duplicateValues.join(', ')}.`;
       result.valid = false;
     }
+  }
+
+  if (!stnk.files[0]) {
+    result.message = `${result.message} Tidak file stnk yang diunggah, `;
+    result.valid = false;
+  }
+
+  if (!ktp.files[0]) {
+    result.message = `${result.message} Tidak file ktp yang diunggah`;
+    result.valid = false;
   }
 
   return result;
