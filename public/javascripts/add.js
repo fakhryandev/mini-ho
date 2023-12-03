@@ -1,5 +1,12 @@
 const registerForm = document.getElementById('requestForm');
 
+document.addEventListener('DOMContentLoaded', function () {
+  $('#parts').tokenfield({
+    delimiter: ';',
+    createTokensOnBlur: true,
+  });
+});
+
 function showLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'flex';
 }
@@ -51,6 +58,7 @@ registerForm.addEventListener('submit', async function (e) {
     };
     if (!error) {
       registerForm.reset();
+      $('#parts').tokenfield('setTokens', []);
     }
     if (error) {
       swalConfig.icon = 'error';
