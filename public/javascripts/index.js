@@ -48,14 +48,72 @@ document.getElementById('report').addEventListener('click', function () {
   const startDate = document.getElementById('tanggalAwal').value;
   const endDate = document.getElementById('tanggalAkhir').value;
 
-  generateReport(startDate, endDate);
+  const { valid, message } = validateRange(startDate, endDate);
+
+  if (valid) {
+    generateReport(startDate, endDate);
+  } else {
+    const swalConfig = {
+      icon: 'error',
+      text: message,
+    };
+
+    Swal.fire(swalConfig);
+  }
 });
 
 document.getElementById('search').addEventListener('click', function () {
   const startDate = document.getElementById('tanggalAwal').value;
   const endDate = document.getElementById('tanggalAkhir').value;
-  getRequestParts(startDate, endDate);
+
+  const { valid, message } = validateRange(startDate, endDate);
+
+  if (valid) {
+    getRequestParts(startDate, endDate);
+  } else {
+    const swalConfig = {
+      icon: 'error',
+      text: message,
+    };
+
+    Swal.fire(swalConfig);
+  }
 });
+
+function parseDate(dateString) {
+  const [day, month, year] = dateString.split('-');
+
+  return new Date(year, month - 1, day);
+}
+
+function validateRange(startDate, endDate) {
+  const startDateConverted = parseDate(startDate);
+  const endDateConverted = parseDate(endDate);
+
+  console.log(startDateConverted);
+  console.log(endDateConverted);
+
+  if (startDateConverted > endDateConverted) {
+    return {
+      valid: false,
+      message: 'Tanggal awal tidak boleh lebih besar dari tanggal akhir.',
+    };
+  }
+  const timeDifference = endDateConverted - startDateConverted;
+  const dayDifference = timeDifference / (1000 * 3600 * 24);
+
+  if (dayDifference > 90) {
+    return {
+      valid: false,
+      message: 'Batas maksimal adalah 3 bulan (90 hari)',
+    };
+  }
+
+  return {
+    valid: true,
+    message: '',
+  };
+}
 
 function gridBuilder(data) {
   const gridContainer = document.getElementById('grid');
@@ -120,7 +178,7 @@ async function generateReport(startDate, endDate) {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename || 'file.xlsx';
+    a.download = filename || 'request_parts.xlsx';
 
     document.body.appendChild(a);
     a.click();
