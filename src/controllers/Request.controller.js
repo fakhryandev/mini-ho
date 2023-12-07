@@ -104,6 +104,7 @@ exports.addRequestParts = async (req, res) => {
 exports.getRequestParts = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    const user = res.locals.currentUser;
 
     const requestParts = await Request.find({
       create_at: {
@@ -112,10 +113,18 @@ exports.getRequestParts = async (req, res) => {
       },
     });
 
-    const formattedData = requestParts.map((item) => ({
-      ...item._doc,
-      create_at: formatDate(item._doc.create_at),
-    }));
+    const formattedData = requestParts.reduce((accumulator, item) => {
+      item._doc.parts.forEach((part) => {
+        accumulator.push({
+          ...item._doc,
+          part: part.partNumber,
+          create_at: formatDate(item._doc.create_at),
+        });
+      });
+
+      return accumulator;
+    }, []);
+
     res.json(formattedData);
   } catch (error) {
     res.json({
@@ -141,7 +150,10 @@ exports.generateReport = async (req, res, next) => {
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader('Content-Disposition', `attachment; filename=${startDate}-${endDate}_RequestPart.xlsx`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${startDate}-${endDate}_RequestPart.xlsx`
+    );
 
     generatedFile.xlsx
       .write(res)

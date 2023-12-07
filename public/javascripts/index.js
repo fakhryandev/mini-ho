@@ -113,6 +113,7 @@ function validateRange(startDate, endDate) {
 }
 
 function gridBuilder(data) {
+  console.log(data);
   const gridContainer = document.getElementById('grid');
   gridContainer.innerHTML = '';
 
@@ -145,6 +146,10 @@ function gridBuilder(data) {
       {
         id: 'tahun',
         name: 'Tahun Motor',
+      },
+      {
+        id: 'part',
+        name: 'Part Number',
       },
       {
         id: 'create_at',
