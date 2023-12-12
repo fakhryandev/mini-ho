@@ -113,7 +113,6 @@ function validateRange(startDate, endDate) {
 }
 
 function gridBuilder(data) {
-  console.log(data);
   const gridContainer = document.getElementById('grid');
   gridContainer.innerHTML = '';
 

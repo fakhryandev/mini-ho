@@ -7,7 +7,10 @@ const RequestSchema = new Schema(
     erro: {
       type: String,
     },
-    nomor: {
+    nomor_request: {
+      type: String,
+    },
+    nomor_kuitansi: {
       type: String,
     },
     nik: {
