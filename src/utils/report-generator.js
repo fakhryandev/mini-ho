@@ -1,18 +1,20 @@
-const ExcelJS = require("exceljs");
+const ExcelJS = require('exceljs');
 
 const buildHeader = (maxPartsLength) => {
   const headers = [
-    "Kode Erro",
-    "Nomor",
-    "Nama",
-    "Nik",
-    "Alamat",
-    "Telepon",
-    "Kota",
-    "Noka",
-    "Nosin",
-    "KTP",
-    "STNK"
+    'Timestamp',
+    'Kode Erro',
+    'Nomor',
+    'Nama',
+    'Alamat',
+    'Kota',
+    'Telepon',
+    'Nomor Rangka',
+    'Nomor Mesin',
+    'Type Motor',
+    'Tahun Motor',
+    'File KTP',
+    'File STNK',
   ];
   for (let i = 0; i < maxPartsLength; i++) {
     headers.push(`Part Number ${i + 1}`, `QTY ${i + 1}`);
@@ -22,25 +24,39 @@ const buildHeader = (maxPartsLength) => {
 };
 
 const buildRow = (item, maxPartsLength) => {
+  const formatedDate = item.create_at
+    .toLocaleString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZone: 'UTC',
+    })
+    .replace(',', '');
+
   const rowData = [
+    formatedDate,
     item.erro,
     item.nomor,
     item.nama,
-    item.nik,
     item.alamat,
-    item.telepon,
     item.kota,
-    item.noka,
+    item.telepon,
+    item.noka.toUpperCase(),
     item.nosin,
+    item.type,
+    item.tahun,
     `localhost:3000/photos/${item.ktp.url}`,
     `localhost:3000/photos/${item.stnk.url}`,
   ];
 
   for (let i = 0; i < maxPartsLength; i++) {
     if (item.parts && item.parts[i]) {
-      const partNumber = item.parts[i].partNumber
-      const partQty = item.parts[i].qty
-      rowData.push(partNumber, partQty);      
+      const partNumber = item.parts[i].partNumber.toUpperCase();
+      const partQty = item.parts[i].qty;
+      rowData.push(partNumber, partQty);
     }
   }
 
@@ -53,7 +69,7 @@ const generator = (data) => {
   );
 
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Request Part");
+  const worksheet = workbook.addWorksheet('Request Part');
 
   worksheet.addRow(buildHeader(maxPartsLength));
 
