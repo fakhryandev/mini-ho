@@ -129,12 +129,24 @@ exports.getRequestParts = async (req, res) => {
     const { startDate, endDate } = req.query;
     const user = res.locals.currentUser;
 
-    const requestParts = await Request.find({
-      create_at: {
-        $gte: convertToDate(startDate, 'T00:00:01'),
-        $lte: convertToDate(endDate, 'T23:59:59'),
-      },
-    });
+    let requestParts = []
+
+    if (user.isAdmin) {
+      requestParts = await Request.find({
+        create_at: {
+          $gte: convertToDate(startDate, 'T00:00:01'),
+          $lte: convertToDate(endDate, 'T23:59:59'),
+        },
+      });
+    }else{
+      requestParts = await Request.find({
+        create_at: {
+          $gte: convertToDate(startDate, 'T00:00:01'),
+          $lte: convertToDate(endDate, 'T23:59:59'),
+        },
+        erro: user.erro
+      });
+    }
 
     const formattedData = requestParts.reduce((accumulator, item) => {
       item._doc.parts.forEach((part) => {
