@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', function () {
   const flatPickSelector = [
     {
       selector: 'tanggalAwal',
@@ -62,14 +62,16 @@ document.getElementById('report').addEventListener('click', function () {
   }
 });
 
-document.getElementById('search').addEventListener('click', function () {
+document.getElementById('search').addEventListener('click', async function () {
   const startDate = document.getElementById('tanggalAwal').value;
   const endDate = document.getElementById('tanggalAkhir').value;
 
   const { valid, message } = validateRange(startDate, endDate);
 
   if (valid) {
-    getRequestParts(startDate, endDate);
+    const data = await getRequestParts(startDate, endDate);
+
+    gridBuilder(data);
   } else {
     const swalConfig = {
       icon: 'error',
@@ -113,7 +115,6 @@ function validateRange(startDate, endDate) {
 }
 
 function gridBuilder(data) {
-  console.log(data);
   const gridContainer = document.getElementById('grid');
   gridContainer.innerHTML = '';
 
@@ -187,17 +188,23 @@ async function generateReport(startDate, endDate) {
     document.body.removeChild(a);
     hideLoadingOverlay();
   } catch (error) {
+    hideLoadingOverlay();
     console.error(error.message);
   }
 }
 
 async function getRequestParts(startDate, endDate) {
-  showLoadingOverlay();
+  try {
+    showLoadingOverlay();
 
-  const requestURL = `api/request?startDate=${startDate}&endDate=${endDate}`;
-  const response = await fetch(requestURL);
-  const result = await response.json();
-  hideLoadingOverlay();
-
-  gridBuilder(result);
+    const requestURL = `api/request?startDate=${startDate}&endDate=${endDate}`;
+    const response = await fetch(requestURL);
+    const result = await response.json();
+    hideLoadingOverlay();
+    
+    return result
+  } catch (error) {
+    hideLoadingOverlay();
+    console.error(error);
+  }
 }

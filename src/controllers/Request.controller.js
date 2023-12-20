@@ -2,6 +2,8 @@ const Request = require('../models/Request');
 const { generator } = require('../utils/report-generator');
 const { convertToDate, formatDate } = require('../utils/convert-date');
 const { validatePartsRequest } = require('../utils/parts-validator');
+const Type = require('../models/Type');
+const Part = require('../models/Part');
 
 const getRequestTwoMonthsAgo = async ({ nik, noka }) => {
   try {
@@ -47,10 +49,27 @@ exports.addRequestParts = async (req, res) => {
 
     const partsArr = parts
       .split(';')
-      .map((item) => item.trim())
+      .map((item) => item.trim().toUpperCase())
       .filter((item) => item != '');
 
-    const twoMonthsAgoRequest = await getRequestTwoMonthsAgo({ noka, nik });
+    const existType = await Type.find({ unitType: type });
+
+    if (!existType) {
+      throw new Error('Type motor tidak terdaftar di database');
+    }
+
+    const resultParts = await Part.find({ partNumber: { $in: partsArr } });
+    const foundParts = resultParts.map((part) => part.partNumber);
+    const missingParts = partsArr.filter((part) => !foundParts.includes(part));
+
+    if (missingParts.length) {
+      throw new Error(`Part berikut tidak ditemukan ${missingParts}`);
+    }
+
+    const twoMonthsAgoRequest = await getRequestTwoMonthsAgo({
+      noka: noka.toUpperCase(),
+      nik,
+    });
 
     const isValid = validatePartsRequest({
       data: twoMonthsAgoRequest,
@@ -73,11 +92,14 @@ exports.addRequestParts = async (req, res) => {
       alamat,
       telepon,
       kota,
-      noka,
+      noka: noka.toUpperCase(),
       nosin,
       type,
       tahun,
-      parts: partsArr.map((partNumber) => ({ partNumber, qty: 1 })),
+      parts: partsArr.map((partNumber) => ({
+        partNumber: partNumber.toUpperCase(),
+        qty: 1,
+      })),
       ktp: {
         path: ktp.path,
       },
