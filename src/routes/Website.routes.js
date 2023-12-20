@@ -10,24 +10,24 @@ router.get('/add', authenticated, (req, res) => {
   res.render('pages/add', { user: res.locals.currentUser });
 });
 
-router.get('/user', (req, res) => {
-  res.render('pages/user/', { user: {username: 'HARDCODE'} })
+router.get('/user', authenticated, (req, res) => {
+  res.render('pages/user/', { user: res.locals.currentUser })
 })
 
-router.get('/user/add', (req, res) => {
-  res.render('pages/user/add', { user: {username: 'HARDCODE'} })
+router.get('/user/add', authenticated, (req, res) => {
+  res.render('pages/user/add', { user: res.locals.currentUser })
 })
 
-router.get('/user/edit', (req, res) => {
-  res.render('pages/user/edit', { user: {username: 'HARDCODE'} })
+router.get('/user/edit/:username', authenticated, (req, res) => {
+  res.render('pages/user/edit', { user: res.locals.currentUser })
 })
 
-router.get('/part', (req, res) => {
-  res.render('pages/part/', { user: {username: 'HARDCODE'} })
+router.get('/part', authenticated, (req, res) => {
+  res.render('pages/part/', { user: res.locals.currentUser })
 })
 
-router.get('/type', (req, res) => {
-  res.render('pages/type/', { user: {username: 'HARDCODE'} })
+router.get('/type', authenticated, (req, res) => {
+  res.render('pages/type/', { user: res.locals.currentUser })
 })
 
 router.get('/login', (req, res) => {

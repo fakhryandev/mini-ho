@@ -18,6 +18,14 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false 
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const User = mongoose.model("User", UserSchema);

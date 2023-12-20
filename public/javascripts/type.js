@@ -45,8 +45,9 @@ async function handleUploadFile(file) {
     formData.append('file', file)
 
     const result = await postFileToServer(formData)
-
+    
     console.log(result)
+    return result
 }
 
 async function getTypes(){
