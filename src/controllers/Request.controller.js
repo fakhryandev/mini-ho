@@ -86,7 +86,8 @@ exports.addRequestParts = async (req, res) => {
 
     const requestPart = new Request({
       erro: user.erro,
-      nomor,
+      nomor_request: req.runningNumber,
+      nomor_kuitansi: nomor,
       nik,
       nama,
       alamat,

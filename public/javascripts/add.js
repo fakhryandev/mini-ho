@@ -157,7 +157,7 @@ function validateRequest(data) {
   } = data;
 
   if (isStringEmptyOrWhitespace(nomor)) {
-    result.message = `${result.message} Nomor Hotline tidak boleh kosong,`;
+    result.message = `${result.message} Nomor Kuitansi Hotline tidak boleh kosong,`;
     result.valid = false;
   }
 
