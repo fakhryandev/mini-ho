@@ -10,6 +10,9 @@ require('dotenv').config();
 const websiteRoutes = require('./src/routes/Website.routes');
 const authRoutes = require('./src/routes/Auth.routes');
 const requestRoutes = require('./src/routes/Request.routes');
+const userRoutes = require('./src/routes/User.routes');
+const partRoutes = require('./src/routes/Part.routes')
+const typeRoutes = require('./src/routes/Type.routes')
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -93,6 +96,9 @@ app.use((req, res, next) => {
 app.use('/', websiteRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/request', requestRoutes);
+app.use('/api/user', userRoutes)
+app.use('/api/part', partRoutes)
+app.use('/api/type', typeRoutes)
 
 app.get('/photos/:urlphoto', requestController.getPhotos);
 
