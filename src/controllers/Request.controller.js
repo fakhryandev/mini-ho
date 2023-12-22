@@ -4,6 +4,7 @@ const { convertToDate, formatDate } = require('../utils/convert-date');
 const { validatePartsRequest } = require('../utils/parts-validator');
 const Type = require('../models/Type');
 const Part = require('../models/Part');
+const { axGenerator } = require('../utils/ax-generator');
 
 const getRequestTwoMonthsAgo = async ({ nik, noka }) => {
   try {
@@ -205,6 +206,45 @@ exports.generateReport = async (req, res, next) => {
     });
   }
 };
+
+exports.generateAX = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const requestParts = await Request.find({
+      create_at: {
+        $gte: convertToDate(startDate, 'T00:00:01'),
+        $lte: convertToDate(endDate, 'T23:59:59'),
+      },
+    });
+
+    const generatedFile = axGenerator(requestParts);
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${startDate}-${endDate}_POERRO.xlsx`
+    );
+
+    generatedFile.xlsx
+      .write(res)
+      .then(() => {
+        res.end();
+      })
+      .catch((error) => {
+        console.error('Gagal menulis ke response', error);
+        res.status(500).send('Internal Server Error');
+      });
+  } catch (error) {
+    res.json({
+      error: true,
+    });
+  }
+}
 
 exports.getPhotos = async (req, res) => {
   try {

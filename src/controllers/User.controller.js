@@ -22,7 +22,8 @@ exports.getUserByUsername = async (req, res) => {
     const username = req.params.username
 
     const user = await User.findOne({
-      username: username
+      username: username,
+      isAdmin: false
     })
 
     if (!user) {

@@ -10,16 +10,16 @@ router.get('/add', authenticated, (req, res) => {
   res.render('pages/add', { user: res.locals.currentUser });
 });
 
-router.get('/user', authenticated, (req, res) => {
-  res.render('pages/user/', { user: res.locals.currentUser })
+router.get('/user', (req, res) => {
+  res.render('pages/user/', { user: 'HARDCODE' })
 })
 
-router.get('/user/add', authenticated, (req, res) => {
-  res.render('pages/user/add', { user: res.locals.currentUser })
+router.get('/user/add', (req, res) => {
+  res.render('pages/user/add', { user: 'HARDCODE' })
 })
 
-router.get('/user/edit/:username', authenticated, (req, res) => {
-  res.render('pages/user/edit', { user: res.locals.currentUser })
+router.get('/user/edit/:username', (req, res) => {
+  res.render('pages/user/edit', { user: 'HARDCODE' })
 })
 
 router.get('/part', authenticated, (req, res) => {

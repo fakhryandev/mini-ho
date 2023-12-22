@@ -12,5 +12,6 @@ router.post(
   requestController.addRequestParts
 );
 router.get('/generate-report', requestController.generateReport);
+router.get('/generate-ax', requestController.generateAX)
 
 module.exports = router;

@@ -62,6 +62,24 @@ document.getElementById('report').addEventListener('click', function () {
   }
 });
 
+document.getElementById('ax').addEventListener('click', function(){
+  const startDate = document.getElementById('tanggalAwal').value;
+  const endDate = document.getElementById('tanggalAkhir').value;
+
+  const { valid, message } = validateRange(startDate, endDate);
+
+  if (valid) {
+    generateAX(startDate, endDate);
+  } else {
+    const swalConfig = {
+      icon: 'error',
+      text: message,
+    };
+
+    Swal.fire(swalConfig);
+  }
+})
+
 document.getElementById('search').addEventListener('click', async function () {
   const startDate = document.getElementById('tanggalAwal').value;
   const endDate = document.getElementById('tanggalAkhir').value;
@@ -165,6 +183,34 @@ function gridBuilder(data) {
 
   return grid;
 }
+
+async function generateAX(startDate, endDate) {
+  try {
+    showLoadingOverlay();
+
+    const requestURL = `api/request/generate-ax?startDate=${startDate}&endDate=${endDate}`;
+    const response = await fetch(requestURL);
+
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const filename = contentDisposition.split('filename=')[1];
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || 'request_parts.xlsx';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    hideLoadingOverlay();
+  } catch (error) {
+    hideLoadingOverlay();
+    console.error(error.message);
+  }
+}
+
 
 async function generateReport(startDate, endDate) {
   try {

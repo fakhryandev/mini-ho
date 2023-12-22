@@ -1,5 +1,8 @@
-document.addEventListener('DOMContentLoaded', function () {});
-const authURL = 'api/auth';
+document.addEventListener('DOMContentLoaded', function () {
+  
+});
+const baseUrl = 'http://localhost:3000';
+const userUrl = `${baseUrl}/api/user`;
 
 const registerForm = document.getElementById('registerForm');
 
@@ -30,10 +33,9 @@ registerForm.addEventListener('submit', async function (e) {
 });
 
 async function register(data) {
-  const registerUrl = `${authURL}/sign-up`;
   showLoadingOverlay();
 
-  const response = await fetch(registerUrl, {
+  const response = await fetch(userUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
