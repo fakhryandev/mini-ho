@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
-  getUsersData().then(data => {
-    gridBuilder(data)
-  })
+  getUsersData().then((data) => {
+    gridBuilder(data);
+  });
 });
 
-document.getElementById('add').addEventListener('click', function(){
-    console.log('a')
-})
+document.getElementById('add').addEventListener('click', function () {
+  window.location = '/user/add';
+});
 
 function gridBuilder(data) {
   const gridContainer = document.getElementById('grid');
@@ -30,22 +30,31 @@ function gridBuilder(data) {
         width: '150px',
       },
       {
-      name: 'Actions',
-      width: '150px',
-      formatter: (cell, row) => {
-        return [
-          gridjs.h('button', {
-            className: 'btn btn-warning',
-            onClick: () => alert(`Editing "${row.cells[1].data}" - Action 1`)
-          }, 'Edit'),
-          ' ',
-          gridjs.h('button', {
-            className: 'btn btn-danger',
-            onClick: () => alert(`Editing "${row.cells[0].data}" - Action 2`)
-          }, 'Delete')
-        ];
-      }
-    }
+        name: 'Actions',
+        width: '150px',
+        formatter: (cell, row) => {
+          return [
+            gridjs.h(
+              'button',
+              {
+                className: 'btn btn-warning',
+                onClick: () =>
+                  (window.location = `/user/edit/${row.cells[1].data}`),
+              },
+              'Edit'
+            ),
+            ' ',
+            gridjs.h(
+              'button',
+              {
+                className: 'btn btn-danger',
+                onClick: () => alert(`Deleting "${row.cells[1].data}"`),
+              },
+              'Delete'
+            ),
+          ];
+        },
+      },
     ],
     pagination: true,
     data: data,
@@ -65,10 +74,10 @@ async function getUsersData() {
     const result = await response.json();
     hideLoadingOverlay();
 
-    return result
+    return result;
   } catch (error) {
     hideLoadingOverlay();
-    console.error(error)
+    console.error(error);
   }
 }
 

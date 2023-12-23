@@ -62,7 +62,7 @@ document.getElementById('report').addEventListener('click', function () {
   }
 });
 
-document.getElementById('ax').addEventListener('click', function(){
+document.getElementById('ax').addEventListener('click', function () {
   const startDate = document.getElementById('tanggalAwal').value;
   const endDate = document.getElementById('tanggalAkhir').value;
 
@@ -78,7 +78,7 @@ document.getElementById('ax').addEventListener('click', function(){
 
     Swal.fire(swalConfig);
   }
-})
+});
 
 document.getElementById('search').addEventListener('click', async function () {
   const startDate = document.getElementById('tanggalAwal').value;
@@ -139,7 +139,7 @@ function gridBuilder(data) {
   const grid = new gridjs.Grid({
     columns: [
       {
-        id: 'nomor',
+        id: 'nomor_request',
         name: 'Nomor Hotline',
       },
       {
@@ -211,7 +211,6 @@ async function generateAX(startDate, endDate) {
   }
 }
 
-
 async function generateReport(startDate, endDate) {
   try {
     showLoadingOverlay();
@@ -247,8 +246,8 @@ async function getRequestParts(startDate, endDate) {
     const response = await fetch(requestURL);
     const result = await response.json();
     hideLoadingOverlay();
-    
-    return result
+
+    return result;
   } catch (error) {
     hideLoadingOverlay();
     console.error(error);

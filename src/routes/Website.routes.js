@@ -11,24 +11,24 @@ router.get('/add', authenticated, (req, res) => {
 });
 
 router.get('/user', (req, res) => {
-  res.render('pages/user/', { user: 'HARDCODE' })
-})
+  res.render('pages/user/', { user: 'HARDCODE' });
+});
 
 router.get('/user/add', (req, res) => {
-  res.render('pages/user/add', { user: 'HARDCODE' })
-})
+  res.render('pages/user/add', { user: { username: 'HARDCODE' } });
+});
 
 router.get('/user/edit/:username', (req, res) => {
-  res.render('pages/user/edit', { user: 'HARDCODE' })
-})
+  res.render('pages/user/edit', { user: 'HARDCODE' });
+});
 
 router.get('/part', authenticated, (req, res) => {
-  res.render('pages/part/', { user: res.locals.currentUser })
-})
+  res.render('pages/part/', { user: res.locals.currentUser });
+});
 
 router.get('/type', authenticated, (req, res) => {
-  res.render('pages/type/', { user: res.locals.currentUser })
-})
+  res.render('pages/type/', { user: res.locals.currentUser });
+});
 
 router.get('/login', (req, res) => {
   if (req.isAuthenticated()) {

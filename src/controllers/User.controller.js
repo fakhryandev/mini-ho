@@ -5,7 +5,7 @@ exports.getUsers = async (req, res) => {
   try {
     const users = await User.find({
       isAdmin: false,
-      isActive: true
+      isActive: true,
     });
 
     res.json(users);
@@ -19,12 +19,13 @@ exports.getUsers = async (req, res) => {
 
 exports.getUserByUsername = async (req, res) => {
   try {
-    const username = req.params.username
+    const username = req.params.username;
 
     const user = await User.findOne({
       username: username,
-      isAdmin: false
-    })
+      isAdmin: false,
+      isActive: true,
+    });
 
     if (!user) {
       return res.json({
@@ -43,15 +44,15 @@ exports.getUserByUsername = async (req, res) => {
       error: true,
     });
   }
-}
+};
 
 exports.deleteUserByUsername = async (req, res) => {
   try {
-    const username = req.params.username
+    const username = req.params.username;
 
     const user = await User.findOne({
-      username: username
-    })
+      username: username,
+    });
 
     if (!user) {
       return res.json({
@@ -60,12 +61,14 @@ exports.deleteUserByUsername = async (req, res) => {
       });
     }
 
-    User.updateOne({
-      username
-    },
-    {
-      isActive: false
-    })
+    User.updateOne(
+      {
+        username,
+      },
+      {
+        isActive: false,
+      }
+    );
 
     return res.json({
       error: false,
@@ -76,7 +79,7 @@ exports.deleteUserByUsername = async (req, res) => {
       error: true,
     });
   }
-}
+};
 
 exports.addUser = async (req, res) => {
   try {
@@ -105,6 +108,48 @@ exports.addUser = async (req, res) => {
     res.status(200).json({
       error: false,
       message: 'Berhasil membuat akun',
+    });
+  } catch (error) {
+    res.json({
+      error: true,
+      message: 'Gagal, membuat akun',
+    });
+  }
+};
+
+exports.editUser = async (req, res) => {
+  try {
+    const { erro, nama, username, password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const updatedUser = {
+      erro,
+      name: nama,
+      username,
+      password: hashedPassword,
+    };
+
+    const filter = {
+      username,
+      isAdmin: false,
+      isActive: true,
+    };
+
+    const user = await User.find(filter);
+
+    if (!user) {
+      res.json({
+        error: true,
+        message: 'Username tidak ditemukan',
+      });
+    }
+
+    await User.findOneAndUpdate(filter, updatedUser);
+
+    res.status(200).json({
+      error: false,
+      message: 'Berhasil update akun',
     });
   } catch (error) {
     res.json({
