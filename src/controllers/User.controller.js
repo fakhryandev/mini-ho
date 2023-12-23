@@ -52,6 +52,8 @@ exports.deleteUserByUsername = async (req, res) => {
 
     const user = await User.findOne({
       username: username,
+      isActive: true,
+      isAdmin: false,
     });
 
     if (!user) {
@@ -61,7 +63,7 @@ exports.deleteUserByUsername = async (req, res) => {
       });
     }
 
-    User.updateOne(
+    await User.updateOne(
       {
         username,
       },

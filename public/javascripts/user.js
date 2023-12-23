@@ -48,7 +48,11 @@ function gridBuilder(data) {
               'button',
               {
                 className: 'btn btn-danger',
-                onClick: () => alert(`Deleting "${row.cells[1].data}"`),
+                onClick: () => {
+                  const username = row.cells[1].data;
+
+                  handleDelete(username);
+                },
               },
               'Delete'
             ),
@@ -63,6 +67,22 @@ function gridBuilder(data) {
   grid.render(gridContainer).forceRender();
 
   return grid;
+}
+
+async function handleDelete(username) {
+  try {
+    showLoadingOverlay();
+
+    const requestURL = `api/user/${username}`;
+    const response = await fetch(requestURL, {
+      method: 'DELETE',
+    });
+    const result = await response.json();
+    hideLoadingOverlay();
+  } catch (error) {
+    hideLoadingOverlay();
+    console.error(error);
+  }
 }
 
 async function getUsersData() {
