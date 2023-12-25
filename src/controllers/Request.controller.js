@@ -55,7 +55,7 @@ exports.addRequestParts = async (req, res) => {
 
     const existType = await Type.find({ unitType: type });
 
-    if (!existType) {
+    if (!existType.length) {
       throw new Error('Type motor tidak terdaftar di database');
     }
 
@@ -111,7 +111,7 @@ exports.addRequestParts = async (req, res) => {
       create_by: user.username,
     });
 
-    await requestPart.save();
+    // await requestPart.save();
 
     res.status(201).json({
       error: false,
@@ -130,7 +130,7 @@ exports.getRequestParts = async (req, res) => {
     const { startDate, endDate } = req.query;
     const user = res.locals.currentUser;
 
-    let requestParts = []
+    let requestParts = [];
 
     if (user.isAdmin) {
       requestParts = await Request.find({
@@ -139,13 +139,13 @@ exports.getRequestParts = async (req, res) => {
           $lte: convertToDate(endDate, 'T23:59:59'),
         },
       });
-    }else{
+    } else {
       requestParts = await Request.find({
         create_at: {
           $gte: convertToDate(startDate, 'T00:00:01'),
           $lte: convertToDate(endDate, 'T23:59:59'),
         },
-        erro: user.erro
+        erro: user.erro,
       });
     }
 
@@ -224,7 +224,7 @@ exports.generateAX = async (req, res) => {
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    
+
     res.setHeader(
       'Content-Disposition',
       `attachment; filename=${startDate}-${endDate}_POERRO.xlsx`
@@ -244,7 +244,7 @@ exports.generateAX = async (req, res) => {
       error: true,
     });
   }
-}
+};
 
 exports.getPhotos = async (req, res) => {
   try {
