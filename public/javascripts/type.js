@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 const typeForm = document.getElementById('typeForm');
 
 partForm.addEventListener('submit', async function (e) {
@@ -14,7 +22,39 @@ partForm.addEventListener('submit', async function (e) {
   const fileInput = document.getElementById('typeInput');
   const file = fileInput.files[0];
 
-  handleUploadFile(file);
+  if (!file) {
+    const swalConfig = {
+      icon: 'error',
+      text: 'Tidak ada file yang diunggah',
+    };
+
+    return Swal.fire(swalConfig);
+  }
+
+  const requiredFileType =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+  if (file.type !== requiredFileType) {
+    const swalConfig = {
+      icon: 'error',
+      text: 'Pilih file XLSX(Excel).',
+    };
+    fileInput.value = '';
+
+    return Swal.fire(swalConfig);
+  }
+
+  const result = await handleUploadFile(file);
+
+  if (result.error) {
+    Swal.fire({
+      icon: 'error',
+      text: result.message,
+    });
+  }
+
+  fileInput.value = '';
+
   const data = await getTypes();
   controlButton(data);
   gridBuilder(data);
@@ -25,21 +65,25 @@ document
   .addEventListener('click', async function (e) {
     const result = await handleResetPart();
     const data = await getTypes();
-    controlButton(data);
 
     gridBuilder(data);
   });
 
 async function handleResetPart() {
   try {
-    const response = await fetch(partUrl, {
+    showLoadingOverlay();
+
+    const response = await fetch(typeUrl, {
       method: 'DELETE',
     });
 
     const result = response.json();
+    hideLoadingOverlay();
 
     return result;
   } catch (error) {
+    hideLoadingOverlay();
+
     console.error(error);
   }
 }
@@ -66,21 +110,28 @@ function controlButton(data) {
 
 async function getTypes() {
   try {
+    showLoadingOverlay();
     const response = await fetch(typeUrl);
     const result = await response.json();
+    hideLoadingOverlay();
 
     return result;
   } catch (error) {
+    hideLoadingOverlay();
+
     console.error(error);
   }
 }
 
 async function postFileToServer(formData) {
+  showLoadingOverlay();
+
   const response = await fetch(typeUrl, {
     method: 'POST',
     body: formData,
   });
   const result = await response.json();
+  hideLoadingOverlay();
 
   return result;
 }

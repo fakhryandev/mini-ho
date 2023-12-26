@@ -8,5 +8,7 @@ const upload = multer({ storage: storage });
 
 router.post('/', upload.single('file'), typeController.storeTypes)
 router.get('/', typeController.getTypes)
+router.delete('/', typeController.deleteTypes)
+
 
 module.exports = router
