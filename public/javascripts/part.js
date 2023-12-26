@@ -2,6 +2,7 @@ const partUrl = 'api/part';
 
 document.addEventListener('DOMContentLoaded', function () {
   getParts().then((data) => {
+    controlButton(data);
     gridBuilder(data);
   });
 });
@@ -15,6 +16,7 @@ partForm.addEventListener('submit', async function (e) {
 
   await handleUploadFile(file);
   const data = await getParts();
+  controlButton(data);
 
   gridBuilder(data);
 });
@@ -24,6 +26,7 @@ document
   .addEventListener('click', async function (e) {
     const result = await handleResetPart();
     const data = await getParts();
+    controlButton(data);
 
     gridBuilder(data);
   });
@@ -48,6 +51,16 @@ async function handleUploadFile(file) {
   const result = await postFileToServer(formData);
 
   return result;
+}
+
+function controlButton(data) {
+  if (data.length) {
+    document.getElementById('partInput').disabled = true;
+    document.getElementById('uploadFile').disabled = true;
+  }
+  if (!data.length) {
+    document.getElementById('resetPart').disabled = true;
+  }
 }
 
 async function getParts() {
