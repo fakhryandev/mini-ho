@@ -48,10 +48,14 @@ function gridBuilder(data) {
               'button',
               {
                 className: 'btn btn-danger',
-                onClick: () => {
+                onClick: async () => {
                   const username = row.cells[1].data;
 
-                  handleDelete(username);
+                  const result = await handleDelete(username);
+                  if (!result.error) {
+                    const users = await getUsersData()
+                    gridBuilder(users);
+                  }
                 },
               },
               'Delete'
@@ -79,6 +83,8 @@ async function handleDelete(username) {
     });
     const result = await response.json();
     hideLoadingOverlay();
+
+    return result
   } catch (error) {
     hideLoadingOverlay();
     console.error(error);
