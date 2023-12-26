@@ -111,7 +111,7 @@ exports.addRequestParts = async (req, res) => {
       create_by: user.username,
     });
 
-    // await requestPart.save();
+    await requestPart.save();
 
     res.status(201).json({
       error: false,
@@ -218,7 +218,19 @@ exports.generateAX = async (req, res) => {
       },
     });
 
-    const generatedFile = axGenerator(requestParts);
+    const formattedData = requestParts.reduce((accumulator, item) => {
+      item._doc.parts.forEach((part) => {
+        accumulator.push({
+          ...item._doc,
+          part: part.partNumber,
+          create_at: formatDate(item._doc.create_at),
+        });
+      });
+
+      return accumulator;
+    }, []);
+
+    const generatedFile = axGenerator(formattedData);
 
     res.setHeader(
       'Content-Type',
