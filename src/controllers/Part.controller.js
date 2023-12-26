@@ -9,6 +9,19 @@ exports.storeParts = async (req, res) => {
     const worksheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(worksheet, { raw: true });
 
+    const requiredColumns = ['Discontinue', 'Item number', 'Product name'];
+
+    for (const column of requiredColumns) {
+      if (!Object.keys(data[0]).includes(column)) {
+        return res
+          .status(400)
+          .json({
+            error: true,
+            message: `Format kolom tidak sesuai.`,
+          });
+      }
+    }
+
     const batchSize = 10;
     const totalRows = data.length;
 
