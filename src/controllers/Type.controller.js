@@ -23,7 +23,7 @@ exports.storeTypes = async (req, res) => {
       }
     }
 
-    const batchSize = 10;
+    const batchSize = 1000;
     const totalRows = data.length;
 
 

@@ -22,7 +22,7 @@ exports.storeParts = async (req, res) => {
       }
     }
 
-    const batchSize = 10;
+    const batchSize = 1000;
     const totalRows = data.length;
 
     for (let start = 0; start < totalRows; start += batchSize) {
@@ -52,7 +52,7 @@ exports.storeParts = async (req, res) => {
 exports.getParts = async (req, res) => {
   try {
     const parts = await Part.find({});
-
+    
     res.json(parts);
   } catch (error) {
     console.error(error);

@@ -95,11 +95,14 @@ async function handleUploadFile(file) {
 
 function controlButton(data) {
   if (data.length) {
+    document.getElementById('resetPart').disabled = false;
     document.getElementById('partInput').disabled = true;
     document.getElementById('uploadFile').disabled = true;
   }
   if (!data.length) {
     document.getElementById('resetPart').disabled = true;
+    document.getElementById('partInput').disabled = false;
+    document.getElementById('uploadFile').disabled = false;
   }
 }
 

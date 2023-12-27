@@ -65,7 +65,8 @@ document
   .addEventListener('click', async function (e) {
     const result = await handleResetPart();
     const data = await getTypes();
-
+    controlButton(data);
+    
     gridBuilder(data);
   });
 
@@ -94,17 +95,19 @@ async function handleUploadFile(file) {
 
   const result = await postFileToServer(formData);
 
-  console.log(result);
   return result;
 }
 
 function controlButton(data) {
   if (data.length) {
+    document.getElementById('resetType').disabled = false;
     document.getElementById('typeInput').disabled = true;
     document.getElementById('uploadFile').disabled = true;
   }
   if (!data.length) {
     document.getElementById('resetType').disabled = true;
+    document.getElementById('typeInput').disabled = false;
+    document.getElementById('uploadFile').disabled = false;
   }
 }
 
