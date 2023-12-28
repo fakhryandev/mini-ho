@@ -63,11 +63,22 @@ partForm.addEventListener('submit', async function (e) {
 document
   .getElementById('resetType')
   .addEventListener('click', async function (e) {
-    const result = await handleResetPart();
-    const data = await getTypes();
-    controlButton(data);
-    
-    gridBuilder(data);
+    const swalConfig = {
+      icon: 'question',
+      text: 'Apakah anda yakin menghapus seluruh data type?',
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Tidak',
+    };
+    const swalResult = await Swal.fire(swalConfig);
+
+    if (swalResult.isConfirmed) {
+      const result = await handleResetPart();
+      const data = await getTypes();
+      controlButton(data);
+
+      gridBuilder(data);
+    }
   });
 
 async function handleResetPart() {

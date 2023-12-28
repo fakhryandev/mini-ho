@@ -62,11 +62,23 @@ partForm.addEventListener('submit', async function (e) {
 document
   .getElementById('resetPart')
   .addEventListener('click', async function (e) {
-    const result = await handleResetPart();
-    const data = await getParts();
-    controlButton(data);
+    const swalConfig = {
+      icon: 'question',
+      text: 'Apakah anda yakin menghapus seluruh data part?',
+      showCancelButton: true,
+      confirmButtonText: "Ya",
+      cancelButtonText: 'Tidak'
+    };
+    const swalResult = await Swal.fire(swalConfig);
+    
+    if (swalResult.isConfirmed) {
+      const result = await handleResetPart();
+      const data = await getParts();
+      controlButton(data);
+  
+      gridBuilder(data);
+    }
 
-    gridBuilder(data);
   });
 
 async function handleResetPart() {

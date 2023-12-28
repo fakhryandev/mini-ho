@@ -51,10 +51,22 @@ function gridBuilder(data) {
                 onClick: async () => {
                   const username = row.cells[1].data;
 
-                  const result = await handleDelete(username);
-                  if (!result.error) {
-                    const users = await getUsersData()
-                    gridBuilder(users);
+                  const swalConfig = {
+                    icon: 'question',
+                    text: `Apakah anda yakin menghapus user ${username} ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak',
+                  };
+                  const swalResult = await Swal.fire(swalConfig);
+
+                  if (swalResult.isConfirmed) {
+
+                    const result = await handleDelete(username);
+                    if (!result.error) {
+                      const users = await getUsersData();
+                      gridBuilder(users);
+                    }
                   }
                 },
               },
@@ -84,7 +96,7 @@ async function handleDelete(username) {
     const result = await response.json();
     hideLoadingOverlay();
 
-    return result
+    return result;
   } catch (error) {
     hideLoadingOverlay();
     console.error(error);
