@@ -50,6 +50,19 @@ const RequestSchema = new Schema(
         },
       },
     ],
+    kode3: {
+      type: String,
+    },
+    kodeax5: {
+      type: String,
+    },
+    kodeax9: {
+      type: String,
+
+    },
+    noAhass: {
+      type: String,
+    },
     ktp: {
       path: {
         type: String,

@@ -108,6 +108,10 @@ exports.addRequestParts = async (req, res) => {
       stnk: {
         path: stnk.path,
       },
+      kode3: user.kode3,
+      kodeax5: user.kodeax5,
+      kodeax9: user.kodeax9,
+      noAhass: user.noAhass,
       create_by: user.username,
     });
 
@@ -224,6 +228,7 @@ exports.generateAX = async (req, res) => {
         accumulator.push({
           ...item._doc,
           part: part.partNumber,
+          qty: part.qty,
           create_at: formatDate(item._doc.create_at),
         });
       });

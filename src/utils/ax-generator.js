@@ -1,4 +1,5 @@
 const ExcelJS = require('exceljs');
+const Type = require('../models/Type');
 
 const buildHeader = () => {
   const headers = [
@@ -23,12 +24,16 @@ const buildHeader = () => {
   return headers;
 };
 
-const buildRow = (item) => {
+const buildRow = async (item) => {
+  const unitName = await Type.findOne({ unitType: item.type }).select(
+    'unitName'
+  );
+  const upload = `${item.kodeax9};${item.nomor_request};${item.create_at};HTLNC; ;${item.part};${item.qty}; ;${item.nama};${item.alamat};${item.kota}; ;${unitName};${item.tahun};${item.telepon};N;N;${item.noka};${item.nosin};ho note: ${item.nomor_request}`;
   const rowData = [
-    'KODE3',
-    'KODEAX5',
-    'KODEAX9',
-    'NOAHASS',
+    item.kode3,
+    item.kodeax5,
+    item.kodeax9,
+    item.noAhass,
     item.nomor_request,
     item.create_at,
     item.part,
@@ -40,9 +45,8 @@ const buildRow = (item) => {
     '',
     item.create_at,
     item.nomor_request,
-    'UPLOAD',
+    upload,
   ];
-
   return rowData;
 };
 
