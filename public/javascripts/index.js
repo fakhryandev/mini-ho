@@ -179,13 +179,18 @@ function gridBuilder(data) {
       },
       {
         name: 'File KTP',
+        data: (row) => row.ktp.url,
         formatter: (cell, row) => {
           return gridjs.h(
             'button',
             {
               className: 'btn btn-primary btn-sm',
-              onClick: () =>
-                alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`),
+              onClick: () => {
+                const hostname = location.hostname;
+                const file = row.cells[9].data;
+                window.open(`${hostname}:3000/photos/${file}`, '_blank');
+                window.focus();
+              },
             },
             'Tampilkan KTP'
           );
@@ -193,13 +198,17 @@ function gridBuilder(data) {
       },
       {
         name: 'File STNK',
+        data: (row) => row.stnk.url,
         formatter: (cell, row) => {
           return gridjs.h(
             'button',
             {
               className: 'btn btn-primary btn-sm',
-              onClick: () =>
-                alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`),
+              onClick: () => {
+                const hostname = location.hostname;
+                const file = row.cells[10].data;
+                window.open(`${hostname}:3000/photos/${file}`, '_blank');
+              },
             },
             'Tampilkan STNK'
           );

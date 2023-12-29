@@ -209,7 +209,7 @@ function validateRequest(data) {
   }
 
   if (isStringEmptyOrWhitespace(nosin)) {
-    result.message = `${result.message} Nomor Hotline tidak boleh kosong,`;
+    result.message = `${result.message} Nomor Mesin tidak boleh kosong,`;
     result.valid = false;
   }
 
