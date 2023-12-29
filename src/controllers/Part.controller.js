@@ -9,16 +9,19 @@ exports.storeParts = async (req, res) => {
     const worksheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(worksheet, { raw: true });
 
-    const requiredColumns = ['Discontinue', 'Item number', 'Product name'];
+    const requiredColumns = [
+      'Is Blacklist HO?',
+      'Item Id',
+      'Item Name',
+      'Max Qty HO',
+    ];
 
     for (const column of requiredColumns) {
       if (!Object.keys(data[0]).includes(column)) {
-        return res
-          .status(400)
-          .json({
-            error: true,
-            message: `Format kolom tidak sesuai.`,
-          });
+        return res.status(400).json({
+          error: true,
+          message: `Format kolom tidak sesuai.`,
+        });
       }
     }
 
@@ -30,10 +33,11 @@ exports.storeParts = async (req, res) => {
       const batchData = data.slice(start, end);
 
       const filteredData = batchData
-        .filter((item) => item['Discontinue'] === 'No')
+        .filter((item) => item['Is Blacklist HO?'] === 'false')
         .map((item) => ({
-          partNumber: item['Item number'],
-          partName: item['Product name'],
+          partNumber: item['Item Id'],
+          partName: item['Item Name'],
+          maxQty: parseInt(item['Max Qty HO']) ?? 1,
         }));
 
       await Part.insertMany(filteredData);
@@ -52,7 +56,7 @@ exports.storeParts = async (req, res) => {
 exports.getParts = async (req, res) => {
   try {
     const parts = await Part.find({});
-    
+
     res.json(parts);
   } catch (error) {
     console.error(error);
