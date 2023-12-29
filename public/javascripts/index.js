@@ -62,23 +62,26 @@ document.getElementById('report').addEventListener('click', function () {
   }
 });
 
-document.getElementById('ax').addEventListener('click', function () {
-  const startDate = document.getElementById('tanggalAwal').value;
-  const endDate = document.getElementById('tanggalAkhir').value;
+const axButton = document.getElementById('ax');
+if (axButton) {
+  axButton.addEventListener('click', function () {
+    const startDate = document.getElementById('tanggalAwal').value;
+    const endDate = document.getElementById('tanggalAkhir').value;
 
-  const { valid, message } = validateRange(startDate, endDate);
+    const { valid, message } = validateRange(startDate, endDate);
 
-  if (valid) {
-    generateAX(startDate, endDate);
-  } else {
-    const swalConfig = {
-      icon: 'error',
-      text: message,
-    };
+    if (valid) {
+      generateAX(startDate, endDate);
+    } else {
+      const swalConfig = {
+        icon: 'error',
+        text: message,
+      };
 
-    Swal.fire(swalConfig);
-  }
-});
+      Swal.fire(swalConfig);
+    }
+  });
+}
 
 document.getElementById('search').addEventListener('click', async function () {
   const startDate = document.getElementById('tanggalAwal').value;
@@ -173,6 +176,34 @@ function gridBuilder(data) {
       {
         id: 'create_at',
         name: 'Tanggal Permintaan',
+      },
+      {
+        name: 'File KTP',
+        formatter: (cell, row) => {
+          return gridjs.h(
+            'button',
+            {
+              className: 'btn btn-primary btn-sm',
+              onClick: () =>
+                alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`),
+            },
+            'Tampilkan KTP'
+          );
+        },
+      },
+      {
+        name: 'File STNK',
+        formatter: (cell, row) => {
+          return gridjs.h(
+            'button',
+            {
+              className: 'btn btn-primary btn-sm',
+              onClick: () =>
+                alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`),
+            },
+            'Tampilkan STNK'
+          );
+        },
       },
     ],
     pagination: true,

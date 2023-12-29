@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -18,16 +18,32 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  kode3: {
+    type: String,
+    required: true,
+  },
+  kodeax5: {
+    type: String,
+    required: true,
+  },
+  kodeax9: {
+    type: String,
+    required: true,
+  },
+  noAhass: {
+    type: String,
+    required: true,
+  },
   isAdmin: {
     type: Boolean,
-    default: false 
+    default: false,
   },
   isActive: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

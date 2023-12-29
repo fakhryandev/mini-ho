@@ -85,7 +85,8 @@ exports.deleteUserByUsername = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const { erro, nama, username, password } = req.body;
+    const { erro, nama, username, password, kode3, kodeax5, kodeax9, ahass } =
+      req.body;
 
     const existUser = await User.findOne({ username });
 
@@ -103,6 +104,10 @@ exports.addUser = async (req, res) => {
       name: nama,
       username,
       password: hashedPassword,
+      kode3,
+      kodeax5,
+      kodeax9,
+      noAhass: ahass,
     });
 
     await user.save();

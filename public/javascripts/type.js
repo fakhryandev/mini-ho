@@ -164,6 +164,10 @@ function gridBuilder(data) {
         id: 'unitName',
         name: 'Unit Name',
       },
+      {
+        id: 'marketName',
+        name: 'Market Name',
+      },
     ],
     pagination: true,
     data: data,

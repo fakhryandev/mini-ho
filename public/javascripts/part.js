@@ -25,34 +25,35 @@ partForm.addEventListener('submit', async function (e) {
   if (!file) {
     const swalConfig = {
       icon: 'error',
-      text: 'Tidak ada file yang diunggah'
+      text: 'Tidak ada file yang diunggah',
     };
 
     return Swal.fire(swalConfig);
   }
 
-  const requiredFileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  const requiredFileType =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
   if (file.type !== requiredFileType) {
     const swalConfig = {
       icon: 'error',
-      text: 'Pilih file XLSX(Excel).'
+      text: 'Pilih file XLSX(Excel).',
     };
-    fileInput.value = ''
+    fileInput.value = '';
 
     return Swal.fire(swalConfig);
   }
 
   const result = await handleUploadFile(file);
 
- if (result.error) {
-  Swal.fire({
-    icon: 'error',
-    text: result.message
-  })
- }
+  if (result.error) {
+    Swal.fire({
+      icon: 'error',
+      text: result.message,
+    });
+  }
 
-  fileInput.value = ''
+  fileInput.value = '';
   const data = await getParts();
   controlButton(data);
 
@@ -66,29 +67,28 @@ document
       icon: 'question',
       text: 'Apakah anda yakin menghapus seluruh data part?',
       showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: 'Tidak'
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Tidak',
     };
     const swalResult = await Swal.fire(swalConfig);
-    
+
     if (swalResult.isConfirmed) {
       const result = await handleResetPart();
       const data = await getParts();
       controlButton(data);
-  
+
       gridBuilder(data);
     }
-
   });
 
 async function handleResetPart() {
   try {
-    showLoadingOverlay()
+    showLoadingOverlay();
     const response = await fetch(partUrl, {
       method: 'DELETE',
     });
     const result = response.json();
-    hideLoadingOverlay()
+    hideLoadingOverlay();
 
     return result;
   } catch (error) {
@@ -120,11 +120,11 @@ function controlButton(data) {
 
 async function getParts() {
   try {
-    showLoadingOverlay()
+    showLoadingOverlay();
     const response = await fetch(partUrl);
     const result = await response.json();
-    hideLoadingOverlay()
-    
+    hideLoadingOverlay();
+
     return result;
   } catch (error) {
     console.error(error);
@@ -133,14 +133,14 @@ async function getParts() {
 
 async function postFileToServer(formData) {
   try {
-    showLoadingOverlay()
+    showLoadingOverlay();
 
     const response = await fetch(partUrl, {
       method: 'POST',
       body: formData,
     });
     const result = await response.json();
-    hideLoadingOverlay()
+    hideLoadingOverlay();
 
     return result;
   } catch (error) {
@@ -161,6 +161,10 @@ function gridBuilder(data) {
       {
         id: 'partName',
         name: 'Part Name',
+      },
+      {
+        id: 'maxQty',
+        name: 'Max QTY',
       },
     ],
     pagination: true,

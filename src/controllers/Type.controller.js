@@ -9,33 +9,29 @@ exports.storeTypes = async (req, res) => {
     const worksheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(worksheet, { raw: true });
 
-
-    const requiredColumns = ['Unit Type', 'Unit Name'];
+    const requiredColumns = ['Unit Type', 'Unit Name', 'Market Name'];
 
     for (const column of requiredColumns) {
       if (!Object.keys(data[0]).includes(column)) {
-        return res
-          .status(400)
-          .json({
-            error: true,
-            message: `Format kolom tidak sesuai.`,
-          });
+        return res.status(400).json({
+          error: true,
+          message: `Format kolom tidak sesuai.`,
+        });
       }
     }
 
     const batchSize = 1000;
     const totalRows = data.length;
 
-
     for (let start = 0; start < totalRows; start += batchSize) {
       const end = Math.min(start + batchSize, totalRows);
       const batchData = data.slice(start, end);
 
-      const filteredData = batchData
-        .map((item) => ({
-          unitType: item['Unit Type'],
-          unitName: item['Unit Name'],
-        }));
+      const filteredData = batchData.map((item) => ({
+        unitType: item['Unit Type'],
+        unitName: item['Unit Name'],
+        marketName: item['Market Name'],
+      }));
 
       await Type.insertMany(filteredData);
     }

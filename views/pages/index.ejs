@@ -41,9 +41,11 @@
           <button type="button" class="btn btn-primary btn-sm" id="report">
             Generate Report
           </button>
+          <% if (user.isAdmin) { %>
           <button type="button" class="btn btn-primary btn-sm" id="ax">
             Generate AX
           </button>
+          <% } %>
         </div>
       </div>
       <div class="mt-4" id="grid"></div>

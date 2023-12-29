@@ -118,6 +118,7 @@ exports.addRequestParts = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    console.log(error.message);
     res.json({
       error: true,
       message: error.message,

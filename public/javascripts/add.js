@@ -25,6 +25,10 @@ ktp.addEventListener('change', function () {
   validateFile(ktp, 'ktp');
 });
 
+document.getElementById('resetForm').addEventListener('click', function () {
+  registerForm.reset();
+});
+
 registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const nomor = document.getElementById('nomor').value;
@@ -166,6 +170,11 @@ function validateRequest(data) {
     result.valid = false;
   }
 
+  if (!isStringEmptyOrWhitespace(nik) && nik.length !== 16) {
+    result.message = `${result.message} NIK tidak sesuai,`;
+    result.valid = false;
+  }
+
   if (isStringEmptyOrWhitespace(nama)) {
     result.message = `${result.message} Nama tidak boleh kosong,`;
     result.valid = false;
@@ -191,8 +200,24 @@ function validateRequest(data) {
     result.valid = false;
   }
 
+  if (
+    !isStringEmptyOrWhitespace(noka) &&
+    (noka.length < 14 || noka.length > 16)
+  ) {
+    result.message = `${result.message} Nomor Rangka tidak sesuai,`;
+    result.valid = false;
+  }
+
   if (isStringEmptyOrWhitespace(nosin)) {
     result.message = `${result.message} Nomor Hotline tidak boleh kosong,`;
+    result.valid = false;
+  }
+
+  if (
+    !isStringEmptyOrWhitespace(nosin) &&
+    (nosin.length < 12 || nosin.length > 13)
+  ) {
+    result.message = `${result.message} Nomor Mesin tidak sesuai,`;
     result.valid = false;
   }
 

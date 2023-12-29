@@ -9,6 +9,9 @@ const PartSchema = new Schema(
     partName: {
       type: String,
     },
+    maxQty: {
+      type: Number,
+    },
   },
   {
     timestamps: {
