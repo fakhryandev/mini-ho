@@ -25,10 +25,9 @@ const buildHeader = () => {
 };
 
 const buildRow = async (item) => {
-  const unitName = await Type.findOne({ unitType: item.type }).select(
-    'unitName'
-  );
-  const upload = `${item.kodeax9};${item.nomor_request};${item.create_at};HTLNC; ;${item.part};${item.qty}; ;${item.nama};${item.alamat};${item.kota}; ;${unitName};${item.tahun};${item.telepon};N;N;${item.noka};${item.nosin};ho note: ${item.nomor_request}`;
+  const result = await Type.findOne({ unitType: item.type }).select('unitName');
+
+  const upload = `${item.kodeax9};${item.nomor_request};${item.create_at};HTLNC; ;${item.part};${item.qty}; ;${item.nama};${item.alamat};${item.kota}; ;${result.unitName};${item.tahun};${item.telepon};N;N;${item.noka};${item.nosin};ho note: ${item.nomor_request}`;
   const rowData = [
     item.kode3,
     item.kodeax5,
@@ -50,14 +49,14 @@ const buildRow = async (item) => {
   return rowData;
 };
 
-const axGenerator = (data) => {
+const axGenerator = async (data) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet1');
 
   worksheet.addRow(buildHeader());
-  data.forEach((item) => {
-    worksheet.addRow(buildRow(item));
-  });
+  for (const item of data) {
+    await worksheet.addRow(await buildRow(item));
+  }
 
   return workbook;
 };

@@ -290,7 +290,7 @@ exports.generateAX = async (req, res) => {
       return accumulator;
     }, []);
 
-    const generatedFile = axGenerator(formattedData);
+    const generatedFile = await axGenerator(formattedData);
 
     res.setHeader(
       'Content-Type',

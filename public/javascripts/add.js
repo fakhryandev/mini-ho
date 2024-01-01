@@ -37,7 +37,7 @@ document.getElementById('nik').addEventListener('keydown', function (event) {
 function validateNumericInput(event) {
   const keyCode = event.which || event.keyCode;
 
-  if ((keyCode < 48 || keyCode > 57) && keyCode !== 8) {
+  if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122)) {
     event.preventDefault();
   }
 }
