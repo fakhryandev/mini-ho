@@ -266,19 +266,26 @@ function validateRequest(data) {
   if (parts.length) {
     const partNumbers = parts.map((part) => part.partNumber);
 
-    const duplicateValues = findDuplicates(partNumbers);
+    const everyPartNumberFill = partNumbers.every((part) => part.trim() !== '');
 
-    if (duplicateValues.length) {
-      result.message = `${
-        result.message
-      } Ada part number yang duplikat ${duplicateValues.join(', ')}.`;
+    if (!everyPartNumberFill) {
+      result.message = `${result.message} Semua form part number harus diisi.`;
       result.valid = false;
-    }
+    } else {
+      const duplicateValues = findDuplicates(partNumbers);
 
-    const invalidQty = parts.find((part) => part.qty < 1);
-    if (invalidQty) {
-      result.message = `${result.message} Qty untuk Part Number ${invalidQty.partNumber} tidak boleh kurang dari 1.`;
-      result.valid = false;
+      if (duplicateValues.length) {
+        result.message = `${
+          result.message
+        } Ada part number yang duplikat ${duplicateValues.join(', ')}.`;
+        result.valid = false;
+      }
+
+      const invalidQty = parts.find((part) => part.qty < 1);
+      if (invalidQty) {
+        result.message = `${result.message} Qty untuk Part Number ${invalidQty.partNumber} tidak boleh kurang dari 1.`;
+        result.valid = false;
+      }
     }
   }
 
