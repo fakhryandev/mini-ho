@@ -4,6 +4,19 @@ const userUrl = `${baseUrl}/api/user`;
 
 const registerForm = document.getElementById('registerForm');
 
+function isUsernameLengthValid(username) {
+  return username.length >= 4 && username.length <= 20;
+}
+
+function isUsernameValidChars(username) {
+  const validCharsRegex = /^[a-zA-Z0-9_]+$/;
+  return validCharsRegex.test(username);
+}
+
+function isPasswordLengthValid(password) {
+  return password.length >= 8 && password.length <= 20;
+}
+
 function showLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'flex';
 }
@@ -63,8 +76,29 @@ function validateRegister(data) {
     result.valid = false;
   }
 
+  if (
+    !isStringEmptyOrWhitespace(username) &&
+    !isUsernameLengthValid(username)
+  ) {
+    result.message = `${result.message} Username harus memiliki panjang antara 4 dan 20 karakter.`;
+    result.valid = false;
+  }
+
+  if (!isStringEmptyOrWhitespace(username) && !isUsernameValidChars(username)) {
+    result.message = `${result.message} Username hanya boleh terdiri dari huruf, angka, dan garis bawah.`;
+    result.valid = false;
+  }
+
   if (isStringEmptyOrWhitespace(password)) {
     result.message = `${result.message} Password tidak boleh kosong.`;
+    result.valid = false;
+  }
+
+  if (
+    !isStringEmptyOrWhitespace(password) &&
+    !isPasswordLengthValid(password)
+  ) {
+    result.message = `${result.message} Password harus memiliki panjang antara 8 dan 20 karakter.`;
     result.valid = false;
   }
 
