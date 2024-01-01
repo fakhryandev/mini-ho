@@ -5,6 +5,8 @@ const { validatePartsRequest } = require('../utils/parts-validator');
 const Type = require('../models/Type');
 const Part = require('../models/Part');
 const { axGenerator } = require('../utils/ax-generator');
+const fs = require('fs');
+const path = require('path');
 
 const getRequestTwoMonthsAgo = async ({ nik, noka }) => {
   try {
@@ -47,6 +49,8 @@ exports.addRequestParts = async (req, res) => {
 
     const ktp = req.files['ktp'][0];
     const stnk = req.files['stnk'][0];
+    const ktpDirectory = path.dirname(ktp.path);
+    const stnkDirectory = path.dirname(stnk.path);
 
     const parsedParts = JSON.parse(parts);
     const partsArr = parsedParts
@@ -56,6 +60,15 @@ exports.addRequestParts = async (req, res) => {
     const existType = await Type.find({ unitType: type });
 
     if (!existType.length) {
+      fs.unlinkSync(ktp.path);
+      fs.unlinkSync(stnk.path);
+
+      if (fs.existsSync(ktpDirectory)) {
+        fs.rmdirSync(ktpDirectory, { recursive: true });
+      }
+      if (fs.existsSync(stnkDirectory)) {
+        fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
       throw new Error('Type motor tidak terdaftar di database');
     }
 
@@ -64,6 +77,15 @@ exports.addRequestParts = async (req, res) => {
     const missingParts = partsArr.filter((part) => !foundParts.includes(part));
 
     if (missingParts.length) {
+      fs.unlinkSync(ktp.path);
+      fs.unlinkSync(stnk.path);
+
+      if (fs.existsSync(ktpDirectory)) {
+        fs.rmdirSync(ktpDirectory, { recursive: true });
+      }
+      if (fs.existsSync(stnkDirectory)) {
+        fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
       throw new Error(`Part berikut tidak ditemukan ${missingParts}`);
     }
 
@@ -80,8 +102,16 @@ exports.addRequestParts = async (req, res) => {
     });
 
     if (partQtyError.length) {
-      console.log(partQtyError);
-      throw new Error(partQtyError.join(' , '));
+      fs.unlinkSync(ktp.path);
+      fs.unlinkSync(stnk.path);
+
+      if (fs.existsSync(ktpDirectory)) {
+        fs.rmdirSync(ktpDirectory, { recursive: true });
+      }
+      if (fs.existsSync(stnkDirectory)) {
+        fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
+      throw new Error(partQtyError.join(', '));
     }
 
     const twoMonthsAgoRequest = await getRequestTwoMonthsAgo({
@@ -95,6 +125,14 @@ exports.addRequestParts = async (req, res) => {
     });
 
     if (!isValid) {
+      fs.unlinkSync(ktp.path);
+      fs.unlinkSync(stnk.path);
+      if (fs.existsSync(ktpDirectory)) {
+        fs.rmdirSync(ktpDirectory, { recursive: true });
+      }
+      if (fs.existsSync(stnkDirectory)) {
+        fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
       throw new Error(
         'Terdapat permintaan part yang sama dalam dua bulan terakhir'
       );
