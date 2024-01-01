@@ -186,10 +186,8 @@ function gridBuilder(data) {
             {
               className: 'btn btn-primary btn-sm',
               onClick: () => {
-                const hostname = location.hostname;
                 const file = row.cells[9].data;
-                window.open(`${hostname}:3000/photos/${file}`, '_blank');
-                window.focus();
+                window.open(`photos/${file}`, '_blank');
               },
             },
             'Tampilkan KTP'
@@ -205,9 +203,8 @@ function gridBuilder(data) {
             {
               className: 'btn btn-primary btn-sm',
               onClick: () => {
-                const hostname = location.hostname;
                 const file = row.cells[10].data;
-                window.open(`${hostname}:3000/photos/${file}`, '_blank');
+                window.open(`photos/${file}`, '_blank');
               },
             },
             'Tampilkan STNK'
