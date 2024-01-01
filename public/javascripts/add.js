@@ -1,11 +1,6 @@
 const registerForm = document.getElementById('requestForm');
 
-document.addEventListener('DOMContentLoaded', function () {
-  $('#parts').tokenfield({
-    delimiter: ';',
-    createTokensOnBlur: true,
-  });
-});
+document.addEventListener('DOMContentLoaded', function () {});
 
 function showLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'flex';
@@ -41,9 +36,24 @@ registerForm.addEventListener('submit', async function (e) {
   const nosin = document.getElementById('nosin').value;
   const type = document.getElementById('type').value;
   const tahun = document.getElementById('tahun').value;
-  const parts = document.getElementById('parts').value;
   const ktp = document.getElementById('ktp');
   const stnk = document.getElementById('stnk');
+
+  const dynamicInputs = document.querySelectorAll(
+    'input[id^="partnumber"], input[id^="qty"]'
+  );
+
+  const parts = [];
+  dynamicInputs.forEach((input, index) => {
+    const partIndex = Math.floor(index / 2);
+
+    if (!parts[partIndex]) {
+      parts[partIndex] = {};
+    }
+
+    parts[partIndex][input.id.includes('partnumber') ? 'partNumber' : 'qty'] =
+      input.value.trim();
+  });
 
   const data = {
     nomor,
@@ -56,9 +66,9 @@ registerForm.addEventListener('submit', async function (e) {
     nosin,
     type,
     tahun,
-    parts,
     ktp,
     stnk,
+    parts,
   };
 
   const { valid, message } = validateRequest(data);
@@ -72,7 +82,6 @@ registerForm.addEventListener('submit', async function (e) {
     };
     if (!error) {
       registerForm.reset();
-      $('#parts').tokenfield('setTokens', []);
     }
     if (error) {
       swalConfig.icon = 'error';
@@ -231,23 +240,26 @@ function validateRequest(data) {
     result.valid = false;
   }
 
-  if (isStringEmptyOrWhitespace(parts)) {
+  if (!parts.length) {
     result.message = `${result.message} Parts tidak boleh kosong.`;
     result.valid = false;
   }
 
-  if (!isStringEmptyOrWhitespace(parts)) {
-    const partsSplitted = parts
-      .split(';')
-      .map((item) => item.trim())
-      .filter((item) => item != '');
+  if (parts.length) {
+    const partNumbers = parts.map((part) => part.partNumber);
 
-    const duplicateValues = findDuplicates(partsSplitted);
+    const duplicateValues = findDuplicates(partNumbers);
 
     if (duplicateValues.length) {
       result.message = `${
         result.message
       } Ada part number yang duplikat ${duplicateValues.join(', ')}.`;
+      result.valid = false;
+    }
+
+    const invalidQty = parts.find((part) => part.qty < 1);
+    if (invalidQty) {
+      result.message = `${result.message} Qty untuk Part Number ${invalidQty.partNumber} tidak boleh kurang dari 1.`;
       result.valid = false;
     }
   }
@@ -295,7 +307,7 @@ async function addRequest(data) {
   formData.append('nosin', nosin);
   formData.append('type', type);
   formData.append('tahun', tahun);
-  formData.append('parts', parts);
+  formData.append('parts', JSON.stringify(parts));
   formData.append('ktp', ktp.files[0]);
   formData.append('stnk', stnk.files[0]);
 
@@ -307,4 +319,72 @@ async function addRequest(data) {
   const result = await response.json();
 
   return result;
+}
+
+document.getElementById('buttonAddPart').addEventListener('click', function () {
+  addNewPartForm();
+});
+
+let formCounter = 2;
+function addNewPartForm() {
+  const container = document.getElementById('part-container');
+  const formGroup = document.createElement('div');
+  formGroup.className = 'row mt-3';
+
+  const firstCol = document.createElement('div');
+  firstCol.classList = 'col-md-4';
+
+  const partNumberLabel = document.createElement('label');
+  partNumberLabel.className = 'form-label';
+  partNumberLabel.htmlFor = `partnumber${formCounter}`;
+  partNumberLabel.innerHTML = 'Part Number';
+
+  const partNumberInput = document.createElement('input');
+  partNumberInput.type = 'text';
+  partNumberInput.className = 'form-control';
+  partNumberInput.id = `partnumber${formCounter}`;
+
+  firstCol.appendChild(partNumberLabel);
+  firstCol.appendChild(partNumberInput);
+
+  const secondCol = document.createElement('div');
+  secondCol.className = 'col-md-4';
+
+  const partQtyLabel = document.createElement('label');
+  partQtyLabel.className = 'form-label';
+  partQtyLabel.htmlFor = `qty${formCounter}`;
+  partQtyLabel.innerHTML = 'Qty';
+
+  const partQtyInput = document.createElement('input');
+  partQtyInput.type = 'number';
+  partQtyInput.className = 'form-control';
+  partQtyInput.id = `qty${formCounter}`;
+
+  secondCol.appendChild(partQtyLabel);
+  secondCol.appendChild(partQtyInput);
+
+  const thirdCol = document.createElement('div');
+  thirdCol.className = 'col-md-2 row align-items-end';
+
+  const buttonDeletePart = document.createElement('button');
+  buttonDeletePart.className = 'btn btn-danger btn-sm';
+  buttonDeletePart.innerHTML = 'Hapus';
+  buttonDeletePart.onclick = function () {
+    removeInput(formGroup);
+  };
+
+  thirdCol.appendChild(buttonDeletePart);
+
+  formGroup.appendChild(firstCol);
+  formGroup.appendChild(secondCol);
+  formGroup.appendChild(thirdCol);
+
+  container.appendChild(formGroup);
+
+  formCounter++;
+}
+
+function removeInput(formGroup) {
+  const container = document.getElementById('part-container');
+  container.removeChild(formGroup);
 }

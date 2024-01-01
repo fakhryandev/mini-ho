@@ -62,9 +62,30 @@
               <input type="text" id="tahun" class="form-control" />
             </div>
 
+            <div class="col-md-12" id="part-container">
+              <div class="row">
+                <div class="col-md-4">
+                  <label for="partnumber1" class="form-label"
+                    >Part Number</label
+                  >
+                  <input type="text" id="partnumber1" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                  <label for="qty1" class="form-label">Qty</label>
+                  <input type="number" id="qty1" class="form-control" />
+                </div>
+              </div>
+            </div>
+
             <div class="col-md-12">
-              <label for="parts" class="form-label">Parts Number</label>
-              <textarea class="form-control" id="parts" rows="3"></textarea>
+              <button
+                class="btn btn-info btn-sm"
+                id="buttonAddPart"
+                type="button"
+              >
+                Tambah Part
+              </button>
             </div>
 
             <div class="col-md-6">
