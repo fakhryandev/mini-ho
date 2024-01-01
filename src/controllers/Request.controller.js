@@ -48,9 +48,9 @@ exports.addRequestParts = async (req, res) => {
     const ktp = req.files['ktp'][0];
     const stnk = req.files['stnk'][0];
 
-    const partsArr = parts
-      .split(';')
-      .map((item) => item.trim().toUpperCase())
+    const parsedParts = JSON.parse(parts);
+    const partsArr = parsedParts
+      .map((item) => item.partNumber.trim().toUpperCase())
       .filter((item) => item != '');
 
     const existType = await Type.find({ unitType: type });
@@ -65,6 +65,23 @@ exports.addRequestParts = async (req, res) => {
 
     if (missingParts.length) {
       throw new Error(`Part berikut tidak ditemukan ${missingParts}`);
+    }
+
+    const partQtyError = [];
+    resultParts.forEach((part) => {
+      const inputQty = parsedParts.find(
+        (item) => item.partNumber === part.partNumber
+      )?.qty;
+      if (inputQty && inputQty > part.maxQty) {
+        partQtyError.push(
+          `Part berikut ${part.partNumber} melebihi maksimal order yang terdaftar pada db ${part.maxQty}`
+        );
+      }
+    });
+
+    if (partQtyError.length) {
+      console.log(partQtyError);
+      throw new Error(partQtyError.join(' , '));
     }
 
     const twoMonthsAgoRequest = await getRequestTwoMonthsAgo({
@@ -121,7 +138,6 @@ exports.addRequestParts = async (req, res) => {
       error: false,
     });
   } catch (error) {
-    console.error(error);
     console.log(error.message);
     res.json({
       error: true,
