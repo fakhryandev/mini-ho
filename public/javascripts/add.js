@@ -24,6 +24,24 @@ document.getElementById('resetForm').addEventListener('click', function () {
   registerForm.reset();
 });
 
+document
+  .getElementById('telepon')
+  .addEventListener('keydown', function (event) {
+    validateNumericInput(event);
+  });
+
+document.getElementById('nik').addEventListener('keydown', function (event) {
+  validateNumericInput(event);
+});
+
+function validateNumericInput(event) {
+  const keyCode = event.which || event.keyCode;
+
+  if ((keyCode < 48 || keyCode > 57) && keyCode !== 8) {
+    event.preventDefault();
+  }
+}
+
 registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const nomor = document.getElementById('nomor').value;
