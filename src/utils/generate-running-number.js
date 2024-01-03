@@ -1,18 +1,22 @@
-const Request = require('../models/Request');
+const mongoose = require('mongoose');
+const RunningNumber = require('../models/RunningNumber');
 
 const generateRunningNumber = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const today = new Date();
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const year = today.getFullYear().toString();
 
-    const lastItem = await Request.findOne().sort({ nomor_request: -1 });
+    const lastRunningNumberDoc = await RunningNumber.findOne().sort({
+      _id: -1,
+    });
 
     let runningNumber;
-    if (lastItem) {
-      const lastYear = lastItem.nomor_request.split('/')[4];
+    if (lastRunningNumberDoc) {
       const lastRunningNumber = parseInt(
-        lastItem.nomor_request.split('/').pop(),
+        lastRunningNumberDoc.split('/').pop(),
         10
       );
 
@@ -24,11 +28,19 @@ const generateRunningNumber = async (req, res, next) => {
     } else {
       runningNumber = '0001';
     }
+
+    await RunningNumber.create({ runningNumber: runningNumber });
+
+    await session.commitTransaction();
+    session.endSession();
+
     const user = res.locals.currentUser;
 
     req.runningNumber = `PO/HTL/${user.erro}/${month}/${year}/${runningNumber}`;
     next();
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error(error);
     res.status(500).json({ error: 'Gagal membuat running number' });
   }
