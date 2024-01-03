@@ -7,6 +7,7 @@ const Part = require('../models/Part');
 const { axGenerator } = require('../utils/ax-generator');
 const fs = require('fs');
 const path = require('path');
+const generateRunningNumber = require('../utils/generate-running-number');
 
 const getRequestTwoMonthsAgo = async ({ nik, noka }) => {
   try {
@@ -140,9 +141,11 @@ exports.addRequestParts = async (req, res) => {
 
     const user = res.locals.currentUser;
 
+    const nohotline = await generateRunningNumber(req, res);
+
     const requestPart = new Request({
       erro: user.erro,
-      nomor_request: req.runningNumber,
+      nomor_request: nohotline,
       nomor_kuitansi: nomor,
       nik,
       nama,

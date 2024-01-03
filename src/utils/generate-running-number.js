@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const RunningNumber = require('../models/RunningNumber');
+const Request = require('../models/Request');
 
-const generateRunningNumber = async (req, res, next) => {
+const generateRunningNumber = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -13,10 +14,13 @@ const generateRunningNumber = async (req, res, next) => {
       _id: -1,
     });
 
+    const lastItem = await Request.findOne().sort({ create_at: -1 });
+
     let runningNumber;
     if (lastRunningNumberDoc) {
+      const lastYear = lastItem.nomor_request.split('/')[4];
       const lastRunningNumber = parseInt(
-        lastRunningNumberDoc.split('/').pop(),
+        lastRunningNumberDoc.runningNumber,
         10
       );
 
@@ -29,20 +33,21 @@ const generateRunningNumber = async (req, res, next) => {
       runningNumber = '0001';
     }
 
+    const user = res.locals.currentUser;
+
     await RunningNumber.create({ runningNumber: runningNumber });
+    const runningNumberCreated = `PO/HTL/${user.erro}/${month}/${year}/${runningNumber}`;
 
     await session.commitTransaction();
     session.endSession();
 
-    const user = res.locals.currentUser;
-
-    req.runningNumber = `PO/HTL/${user.erro}/${month}/${year}/${runningNumber}`;
-    next();
+    return runningNumberCreated;
   } catch (error) {
+    console.error(error);
     await session.abortTransaction();
     session.endSession();
-    console.error(error);
-    res.status(500).json({ error: 'Gagal membuat running number' });
+    res
+      .json({ error: true, message: 'Gagal membuat running number' });
   }
 };
 
