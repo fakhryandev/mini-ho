@@ -15,6 +15,7 @@ const buildHeader = (maxPartsLength) => {
     'Tahun Motor',
     'File KTP',
     'File STNK',
+    'File Kuitansi'
   ];
   for (let i = 0; i < maxPartsLength; i++) {
     headers.push(`Part Number ${i + 1}`, `QTY ${i + 1}`);
@@ -50,6 +51,8 @@ const buildRow = (item, maxPartsLength) => {
     item.tahun,
     `localhost:3000/photos/${item.ktp.url}`,
     `localhost:3000/photos/${item.stnk.url}`,
+    `localhost:3000/photos/${item.kuitansi.url}`,
+
   ];
 
   for (let i = 0; i < maxPartsLength; i++) {

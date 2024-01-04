@@ -7,7 +7,7 @@ const { authenticated } = require('../utils/authentication');
 router.get('/', authenticated, requestController.getRequestParts);
 router.post(
   '/',
-  upload.fields([{ name: 'ktp' }, { name: 'stnk' }]),
+  upload.fields([{ name: 'ktp' }, { name: 'stnk' }, { name: 'kuitansi' }]),
   authenticated,
   requestController.addRequestParts
 );

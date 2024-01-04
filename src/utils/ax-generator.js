@@ -27,7 +27,7 @@ const buildHeader = () => {
 const buildRow = async (item) => {
   const result = await Type.findOne({ unitType: item.type }).select('unitName');
 
-  const upload = `${item.kodeax9};${item.nomor_request};${item.create_at};HTLNC; ;${item.part};${item.qty}; ;${item.nama};${item.alamat};${item.kota}; ;${result.unitName};${item.tahun};${item.telepon};N;N;${item.noka};${item.nosin};ho note: ${item.nomor_request}`;
+  const upload = `${item.kodeax9};${item.nomor_request};${item.create_at};HTLNC; ;${item.part};${item.qty}; ;${item.nama};${item.alamat};${item.kota}; ;${result.unitName};${item.tahun};${item.telepon};N;N;${item.noka};${item.nosin};ho note:${item.nomor_request}`;
   const rowData = [
     item.kode3,
     item.kodeax5,

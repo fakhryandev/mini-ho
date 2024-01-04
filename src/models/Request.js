@@ -81,6 +81,15 @@ const RequestSchema = new Schema(
         unique: true,
       },
     },
+    kuitansi: {
+      path: {
+        type: String,
+      },
+      url: {
+        type: String,
+        unique: true,
+      },
+    },
     create_by: {
       type: String,
     },
@@ -96,6 +105,7 @@ const RequestSchema = new Schema(
 RequestSchema.pre('save', function (next) {
   this.stnk.url = `${Date.now()}-${uuid.v4()}`;
   this.ktp.url = `${Date.now()}-${uuid.v4()}`;
+  this.kuitansi.url = `${Date.now()}-${uuid.v4()}`;
   next();
 });
 

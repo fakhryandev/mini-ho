@@ -144,41 +144,52 @@ function gridBuilder(data) {
       {
         id: 'nomor_request',
         name: 'Nomor Hotline',
+        width: '300px'
       },
       {
         id: 'nik',
         name: 'KTP',
+        width: '300px'
       },
       {
         id: 'nama',
         name: 'Nama',
+        width: '200px'
       },
       {
         id: 'noka',
         name: 'Nomor Rangka',
+        width: '300px'
       },
       {
         id: 'nosin',
         name: 'Nomor Mesin',
+        width: '300px'
       },
       {
         id: 'type',
         name: 'Type Motor',
+        width: '200px'
       },
       {
         id: 'tahun',
         name: 'Tahun Motor',
+        width: '200px'
+
       },
       {
         id: 'part',
         name: 'Part Number',
+        width: '300px'
       },
       {
         id: 'create_at',
         name: 'Tanggal Permintaan',
+        width: '200px'
       },
       {
         name: 'File KTP',
+        width: '200px',
         data: (row) => row.ktp.url,
         formatter: (cell, row) => {
           return gridjs.h(
@@ -196,6 +207,7 @@ function gridBuilder(data) {
       },
       {
         name: 'File STNK',
+        width: '200px',
         data: (row) => row.stnk.url,
         formatter: (cell, row) => {
           return gridjs.h(
@@ -211,9 +223,28 @@ function gridBuilder(data) {
           );
         },
       },
+      {
+        name: 'File Kuitansi',
+        width: '200px',
+        data: (row) => row.kuitansi.url,
+        formatter: (cell, row) => {
+          return gridjs.h(
+            'button',
+            {
+              className: 'btn btn-primary btn-sm',
+              onClick: () => {
+                const file = row.cells[11].data;
+                window.open(`photos/${file}`, '_blank');
+              },
+            },
+            'Tampilkan Kuitansi'
+          );
+        },
+      },
     ],
     pagination: true,
     data: data,
+    resizable: true,
   });
 
   grid.render(gridContainer).forceRender();

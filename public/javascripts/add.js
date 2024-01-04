@@ -12,12 +12,18 @@ function hideLoadingOverlay() {
 
 const stnk = document.getElementById('stnk');
 const ktp = document.getElementById('ktp');
+const kuitansi = document.getElementById('kuitansi');
+
 stnk.addEventListener('change', function () {
   validateFile(stnk, 'stnk');
 });
 
 ktp.addEventListener('change', function () {
   validateFile(ktp, 'ktp');
+});
+
+kuitansi.addEventListener('change', function () {
+  validateFile(kuitansi, 'kuitansi');
 });
 
 document.getElementById('resetForm').addEventListener('click', function () {
@@ -56,6 +62,7 @@ registerForm.addEventListener('submit', async function (e) {
   const tahun = document.getElementById('tahun').value;
   const ktp = document.getElementById('ktp');
   const stnk = document.getElementById('stnk');
+  const kuitansi = document.getElementById('kuitansi');
 
   const dynamicInputs = document.querySelectorAll(
     'input[id^="partnumber"], input[id^="qty"]'
@@ -87,6 +94,7 @@ registerForm.addEventListener('submit', async function (e) {
     ktp,
     stnk,
     parts,
+    kuitansi
   };
 
   const { valid, message } = validateRequest(data);
@@ -185,6 +193,7 @@ function validateRequest(data) {
     parts,
     stnk,
     ktp,
+    kuitansi
   } = data;
 
   if (isStringEmptyOrWhitespace(nomor)) {
@@ -295,7 +304,12 @@ function validateRequest(data) {
   }
 
   if (!ktp.files[0]) {
-    result.message = `${result.message} Tidak file ktp yang diunggah`;
+    result.message = `${result.message} Tidak file ktp yang diunggah,`;
+    result.valid = false;
+  }
+
+  if (!kuitansi.files[0]) {
+    result.message = `${result.message} Tidak file kuitansi yang diunggah`;
     result.valid = false;
   }
 
@@ -320,6 +334,7 @@ async function addRequest(data) {
     parts,
     ktp,
     stnk,
+    kuitansi
   } = data;
 
   formData.append('nomor', nomor);
@@ -335,6 +350,7 @@ async function addRequest(data) {
   formData.append('parts', JSON.stringify(parts));
   formData.append('ktp', ktp.files[0]);
   formData.append('stnk', stnk.files[0]);
+  formData.append('kuitansi', kuitansi.files[0])
 
   const response = await fetch(requestURL, {
     method: 'POST',

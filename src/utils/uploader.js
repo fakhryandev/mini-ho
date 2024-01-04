@@ -16,8 +16,14 @@ const storage = multer.diskStorage({
       }
 
       cb(null, uploadFolder);
-    } else {
+    } else if (fieldname == 'ktp') {
       const uploadFolder = `${homePath}/mini-ho-file/ktp/${nomor}`;
+      if (!fs.existsSync(uploadFolder)) {
+        fs.mkdirSync(uploadFolder, { recursive: true });
+      }
+      cb(null, uploadFolder);
+    } else {
+      const uploadFolder = `${homePath}/mini-ho-file/kuitansi/${nomor}`;
       if (!fs.existsSync(uploadFolder)) {
         fs.mkdirSync(uploadFolder, { recursive: true });
       }

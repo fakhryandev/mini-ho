@@ -50,8 +50,10 @@ exports.addRequestParts = async (req, res) => {
 
     const ktp = req.files['ktp'][0];
     const stnk = req.files['stnk'][0];
+    const kuitansi = req.files['kuitansi'][0];
     const ktpDirectory = path.dirname(ktp.path);
     const stnkDirectory = path.dirname(stnk.path);
+    const kuitansiDirectory = path.dirname(kuitansi.path);
 
     const parsedParts = JSON.parse(parts);
     const partsArr = parsedParts
@@ -63,12 +65,16 @@ exports.addRequestParts = async (req, res) => {
     if (!existType.length) {
       fs.unlinkSync(ktp.path);
       fs.unlinkSync(stnk.path);
+      fs.unlinkSync(kuitansi.path);
 
       if (fs.existsSync(ktpDirectory)) {
         fs.rmdirSync(ktpDirectory, { recursive: true });
       }
       if (fs.existsSync(stnkDirectory)) {
         fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
+      if (fs.existsSync(kuitansiDirectory)) {
+        fs.rmdirSync(kuitansiDirectory, { recursive: true });
       }
       throw new Error('Type motor tidak terdaftar di database');
     }
@@ -80,12 +86,16 @@ exports.addRequestParts = async (req, res) => {
     if (missingParts.length) {
       fs.unlinkSync(ktp.path);
       fs.unlinkSync(stnk.path);
+      fs.unlinkSync(kuitansi.path);
 
       if (fs.existsSync(ktpDirectory)) {
         fs.rmdirSync(ktpDirectory, { recursive: true });
       }
       if (fs.existsSync(stnkDirectory)) {
         fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
+      if (fs.existsSync(kuitansiDirectory)) {
+        fs.rmdirSync(kuitansiDirectory, { recursive: true });
       }
       throw new Error(`Part berikut tidak ditemukan ${missingParts}`);
     }
@@ -97,7 +107,7 @@ exports.addRequestParts = async (req, res) => {
       )?.qty;
       if (inputQty && inputQty > part.maxQty) {
         partQtyError.push(
-          `Part berikut ${part.partNumber} melebihi maksimal order yang terdaftar pada db ${part.maxQty}`
+          `Part berikut ${part.partNumber} melebihi maksimal order yang terdaftar pada database ${part.maxQty}`
         );
       }
     });
@@ -105,12 +115,16 @@ exports.addRequestParts = async (req, res) => {
     if (partQtyError.length) {
       fs.unlinkSync(ktp.path);
       fs.unlinkSync(stnk.path);
+      fs.unlinkSync(kuitansi.path);
 
       if (fs.existsSync(ktpDirectory)) {
         fs.rmdirSync(ktpDirectory, { recursive: true });
       }
       if (fs.existsSync(stnkDirectory)) {
         fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
+      if (fs.existsSync(kuitansiDirectory)) {
+        fs.rmdirSync(kuitansiDirectory, { recursive: true });
       }
       throw new Error(partQtyError.join(', '));
     }
@@ -128,11 +142,16 @@ exports.addRequestParts = async (req, res) => {
     if (!isValid) {
       fs.unlinkSync(ktp.path);
       fs.unlinkSync(stnk.path);
+      fs.unlinkSync(kuitansi.path);
+
       if (fs.existsSync(ktpDirectory)) {
         fs.rmdirSync(ktpDirectory, { recursive: true });
       }
       if (fs.existsSync(stnkDirectory)) {
         fs.rmdirSync(stnkDirectory, { recursive: true });
+      }
+      if (fs.existsSync(kuitansiDirectory)) {
+        fs.rmdirSync(kuitansiDirectory, { recursive: true });
       }
       throw new Error(
         'Terdapat permintaan part yang sama dalam dua bulan terakhir'
@@ -165,6 +184,9 @@ exports.addRequestParts = async (req, res) => {
       },
       stnk: {
         path: stnk.path,
+      },
+      kuitansi: {
+        path: kuitansi.path,
       },
       kode3: user.kode3,
       kodeax5: user.kodeax5,
@@ -331,6 +353,9 @@ exports.getPhotos = async (req, res) => {
         {
           'ktp.url': req.params.urlphoto,
         },
+        {
+          'kuitansi.url': req.params.urlphoto,
+        },
       ],
     });
 
@@ -341,7 +366,9 @@ exports.getPhotos = async (req, res) => {
     const filePath =
       req.params.urlphoto === photoData.stnk.url
         ? photoData.stnk.path
-        : photoData.ktp.path;
+        : req.params.urlphoto === photoData.ktp.path
+        ? photoData.stnk.path
+        : photoData.kuitansi.path;
 
     res.sendFile(filePath);
   } catch (error) {
