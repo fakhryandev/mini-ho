@@ -33,11 +33,15 @@ exports.storeParts = async (req, res) => {
       const batchData = data.slice(start, end);
 
       const filteredData = batchData
-        .filter((item) => item['Is Blacklist HO?'] === 'false')
+        .filter(
+          (item) =>
+            item['Is Blacklist HO?'] === 'false' &&
+            (item['Max Qty HO'] != 0 || item['Max Qty HO'].toString().trim() != '')
+        )
         .map((item) => ({
           partNumber: item['Item Id'],
           partName: item['Item Name'],
-          maxQty: parseInt(item['Max Qty HO']) ?? 1,
+          maxQty: parseInt(item['Max Qty HO']),
         }));
 
       await Part.insertMany(filteredData);
