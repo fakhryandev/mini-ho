@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    env_file:
+    - .env
+  mongodb:
+    image: "mongo:6"
+    ports:
+      - "27017:27017"
