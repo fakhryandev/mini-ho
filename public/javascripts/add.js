@@ -40,10 +40,24 @@ document.getElementById('nik').addEventListener('keydown', function (event) {
   validateNumericInput(event);
 });
 
+document.getElementById('year').addEventListener('keydown', function (event) {
+  validateNumericInput(event);
+});
+
 function validateNumericInput(event) {
   const keyCode = event.which || event.keyCode;
+  const isShiftPressed = event.shiftKey;
 
-  if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122)) {
+  if (
+    (keyCode >= 65 && keyCode <= 90) || // huruf besar
+    (keyCode >= 97 && keyCode <= 122) || // huruf kecil
+    (isShiftPressed &&
+      ((keyCode >= 49 && keyCode <= 57) ||
+        (keyCode >= 187 && keyCode <= 191))) || // tombol Shift bersamaan dengan 1 sampai +
+    keyCode === 189 ||
+    keyCode === 187 ||
+    keyCode === 48 // - + 0 tanpa Shift
+  ) {
     event.preventDefault();
   }
 }
@@ -94,7 +108,7 @@ registerForm.addEventListener('submit', async function (e) {
     ktp,
     stnk,
     parts,
-    kuitansi
+    kuitansi,
   };
 
   const { valid, message } = validateRequest(data);
@@ -193,7 +207,7 @@ function validateRequest(data) {
     parts,
     stnk,
     ktp,
-    kuitansi
+    kuitansi,
   } = data;
 
   if (isStringEmptyOrWhitespace(nomor)) {
@@ -334,7 +348,7 @@ async function addRequest(data) {
     parts,
     ktp,
     stnk,
-    kuitansi
+    kuitansi,
   } = data;
 
   formData.append('nomor', nomor);
@@ -350,7 +364,7 @@ async function addRequest(data) {
   formData.append('parts', JSON.stringify(parts));
   formData.append('ktp', ktp.files[0]);
   formData.append('stnk', stnk.files[0]);
-  formData.append('kuitansi', kuitansi.files[0])
+  formData.append('kuitansi', kuitansi.files[0]);
 
   const response = await fetch(requestURL, {
     method: 'POST',
