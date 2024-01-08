@@ -40,7 +40,7 @@ document.getElementById('nik').addEventListener('keydown', function (event) {
   validateNumericInput(event);
 });
 
-document.getElementById('year').addEventListener('keydown', function (event) {
+document.getElementById('tahun').addEventListener('keydown', function (event) {
   validateNumericInput(event);
 });
 
@@ -49,14 +49,14 @@ function validateNumericInput(event) {
   const isShiftPressed = event.shiftKey;
 
   if (
-    (keyCode >= 65 && keyCode <= 90) || // huruf besar
-    (keyCode >= 97 && keyCode <= 122) || // huruf kecil
+    (keyCode >= 65 && keyCode <= 90) ||
+    (keyCode >= 97 && keyCode <= 122) ||
     (isShiftPressed &&
       ((keyCode >= 49 && keyCode <= 57) ||
-        (keyCode >= 187 && keyCode <= 191))) || // tombol Shift bersamaan dengan 1 sampai +
+        (keyCode >= 187 && keyCode <= 191))) ||
     keyCode === 189 ||
     keyCode === 187 ||
-    keyCode === 48 // - + 0 tanpa Shift
+    keyCode === 48
   ) {
     event.preventDefault();
   }
