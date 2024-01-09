@@ -54,9 +54,16 @@ function validateNumericInput(event) {
     (isShiftPressed &&
       ((keyCode >= 49 && keyCode <= 57) ||
         (keyCode >= 187 && keyCode <= 191))) ||
+    (isShiftPressed && keyCode === 48) ||
     keyCode === 189 ||
     keyCode === 187 ||
-    (isShiftPressed && keyCode === 48)
+    keyCode === 188 ||
+    keyCode === 190 ||
+    keyCode === 191 ||
+    keyCode === 186 ||
+    keyCode === 222 ||
+    keyCode === 219 ||
+    keyCode === 221
   ) {
     event.preventDefault();
   }
