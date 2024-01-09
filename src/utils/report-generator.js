@@ -40,7 +40,7 @@ const buildRow = (item, maxPartsLength) => {
   const rowData = [
     formatedDate,
     item.erro,
-    item.nomor,
+    item.nomor_request,
     item.nama,
     item.alamat,
     item.kota,
