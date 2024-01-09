@@ -259,7 +259,7 @@ function validateRequest(data) {
 
   if (
     !isStringEmptyOrWhitespace(noka) &&
-    (noka.length < 14 || noka.length > 16)
+    (noka.length < 14 || noka.length > 18)
   ) {
     result.message = `${result.message} Nomor Rangka tidak sesuai,`;
     result.valid = false;
@@ -272,7 +272,7 @@ function validateRequest(data) {
 
   if (
     !isStringEmptyOrWhitespace(nosin) &&
-    (nosin.length < 12 || nosin.length > 13)
+    (nosin.length < 12 || nosin.length > 15)
   ) {
     result.message = `${result.message} Nomor Mesin tidak sesuai,`;
     result.valid = false;
